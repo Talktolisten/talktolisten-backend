@@ -36,6 +36,7 @@ class Bot(Base):
     voice_id = Column(Integer, ForeignKey(
         "voices.voice_id", ondelete="CASCADE"), nullable=False)
     num_chats = Column(Integer, nullable=False,server_default="0")
+    likes = Column(Integer, nullable=False,server_default="0")
     created_by = Column(String, ForeignKey(
         "users.username", ondelete="CASCADE"), nullable=False)
 
