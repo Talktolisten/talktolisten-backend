@@ -18,12 +18,17 @@ source venv/bin/activate
 venv\Scripts\activate
 ```
 
-1. Install requirements
+3. Install requirements
 ```bash
 pip install -r requirements.txt
 ```
 
-1. Run the server
+4. Run the server
 ```bash
 unicorn app.main:app --reload
+```
+
+or
+```bash
+python3 server.py
 ```
