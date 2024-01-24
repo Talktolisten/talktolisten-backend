@@ -34,7 +34,7 @@ python3 server.py
 ```
 
 ## Other commands
-1. Update database using A
+1. Update database using
 ```bash
 alembic revision --autogenerate -m "Commit message"
 ```
