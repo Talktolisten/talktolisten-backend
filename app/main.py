@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from . import models
 from .database import engine
+from .routes import test, explore
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -18,7 +19,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# app.include_router(auth.router)  # username:PK, dob, fname,uid store in postgres -> uid(firebase) : PK
+app.include_router(test.router)
+app.include_router(explore.router)
 
 
 @app.get("/")

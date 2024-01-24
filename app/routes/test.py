@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 
 router = APIRouter()
 
-@router.get("/")
+@router.get("/connection")
 def create_article() -> JSONResponse:
     return JSONResponse(status_code=200,
                         content={"message": "success"})

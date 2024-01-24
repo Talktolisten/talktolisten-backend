@@ -32,3 +32,15 @@ or
 ```bash
 python3 server.py
 ```
+
+## Other commands
+1. Update database using A
+```bash
+alembic revision --autogenerate -m "Commit message"
+```
+
+then
+
+```bash
+alembic upgrade head
+```
