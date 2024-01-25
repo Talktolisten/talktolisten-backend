@@ -26,39 +26,6 @@ user2 = User(
     profile_picture="data/user/avatar.png",
 )
 
-bot1 = Bot(
-    bot_id=1928,
-    bot_name="Sister Anya",
-    short_description="A talented musician, Mia's ability to create beautiful melodies from found objects brings solace and joy to the group. Her music becomes a powerful tool for expressing their emotions, fostering unity, and reminding them of the beauty that still exists in their world",
-    description="Mia, the gifted musician of the group, possesses an extraordinary ability to craft enchanting melodies from found objects. Through her music, she weaves a tapestry of emotions, bringing solace and joy to her companions. In a world scarred by desolation, her music becomes a beacon of hope, reminding them of the beauty that still exists. Her melodies have the power to unite hearts, fostering a sense of community and resilience in the face of adversity",
-    profile_picture="data/bot/avatar.png",
-    category="Featured",
-    voice_id=1,
-    created_by="umar6admin",
-)
-
-bot2 = Bot(
-    bot_id=19218,
-    bot_name="Mia",
-    short_description="A skilled healer and herbalist, Sister Anya resides in a remote forest monastery. Her deep connection with nature allows her to create powerful healing potions and remedies using the forest's plants",
-    description="Introducing Sister Anya, a skilled healer and herbalist residing in a remote forest monastery. Her deep connection with nature has granted her the ability to create powerful healing potions and remedies using the forest's plants. She is known for her wisdom, compassion, and unwavering dedication to helping those in need. Within her serene abode, Sister Anya nurtures the forest's secrets and shares her healing gifts with all who seek her aid",
-    profile_picture="data/bot/avatar.png",
-    category="Featured",
-    voice_id=1,
-    created_by="umar6admin",
-)
-
-bot3 = Bot(
-    bot_id=19228,
-    bot_name="Eamon Shadowreaper",
-    short_description="A spectral assassin with a thirst for vengeance, Eamon Shadowreaper uses his ghostly abilities to eliminate those who have wronged him. His stealth and precision make him a deadly foe, feared by both the living and the dead",
-    description="Eamon Shadowreaper, the spectral assassin, seeks revenge on those who wronged him. His ghostly abilities allow him to move through shadows and strike with deadly precision, making him a formidable and feared adversary. Vengeance is his driving force, and he will stop at nothing to make those who wronged him pay",
-    profile_picture="data/bot/avatar.png",
-    category="Featured",
-    voice_id=2,
-    created_by="john1011",
-)
-
 voice1 = Voice(
     voice_id=101,
     voice_name="Taylor",
@@ -77,96 +44,139 @@ voice2 = Voice(
     created_by="john1011",
 )
 
+bot1 = Bot(
+    bot_id=1928,
+    bot_name="Sister Anya",
+    short_description="A talented musician, Mia's ability to create beautiful melodies from found objects brings solace and joy to the group. Her music becomes a powerful tool for expressing their emotions, fostering unity, and reminding them of the beauty that still exists in their world",
+    description="Mia, the gifted musician of the group, possesses an extraordinary ability to craft enchanting melodies from found objects. Through her music, she weaves a tapestry of emotions, bringing solace and joy to her companions. In a world scarred by desolation, her music becomes a beacon of hope, reminding them of the beauty that still exists. Her melodies have the power to unite hearts, fostering a sense of community and resilience in the face of adversity",
+    profile_picture="data/bot/avatar.png",
+    category="Featured",
+    voice_id=101,
+    created_by="umar6admin",
+)
+
+bot2 = Bot(
+    bot_id=19218,
+    bot_name="Mia",
+    short_description="A skilled healer and herbalist, Sister Anya resides in a remote forest monastery. Her deep connection with nature allows her to create powerful healing potions and remedies using the forest's plants",
+    description="Introducing Sister Anya, a skilled healer and herbalist residing in a remote forest monastery. Her deep connection with nature has granted her the ability to create powerful healing potions and remedies using the forest's plants. She is known for her wisdom, compassion, and unwavering dedication to helping those in need. Within her serene abode, Sister Anya nurtures the forest's secrets and shares her healing gifts with all who seek her aid",
+    profile_picture="data/bot/avatar.png",
+    category="Featured",
+    voice_id=101,
+    created_by="umar6admin",
+)
+
+bot3 = Bot(
+    bot_id=19228,
+    bot_name="Eamon Shadowreaper",
+    short_description="A spectral assassin with a thirst for vengeance, Eamon Shadowreaper uses his ghostly abilities to eliminate those who have wronged him. His stealth and precision make him a deadly foe, feared by both the living and the dead",
+    description="Eamon Shadowreaper, the spectral assassin, seeks revenge on those who wronged him. His ghostly abilities allow him to move through shadows and strike with deadly precision, making him a formidable and feared adversary. Vengeance is his driving force, and he will stop at nothing to make those who wronged him pay",
+    profile_picture="data/bot/avatar.png",
+    category="Featured",
+    voice_id=102,
+    created_by="john1011",
+)
+
 chat1 = Chat(
-    chat_id=10001,
+    chat_id=1011,
     user_id="umar6admin",
     bot_id1=1928,
-    last_message=182211237765,
+    # last_message=1283,
 )
 
 chat12 = Chat(
-    chat_id=100003,
+    chat_id=1003,
     user_id="umar6admin",
     bot_id1=19218,
-    last_message=1823421337765,
+    # last_message=432,
 )
 
 chat3 = Chat(
-    chat_id=10004,
+    chat_id=1044,
     user_id="john1011",
     bot_id1=19228,
-    last_message=12342137765,
+    # last_message=5313,
 )
 
 message1 = Message(
-    message_id=182137765,
-    chat_id=10001,
+    message_id=1765,
+    chat_id=1011,
     message="Hello",
     created_by_user="user1123123",
 )
 
 message12 = Message(
-    message_id=18211237765,
-    chat_id=10001,
+    message_id=18213,
+    chat_id=1011,
     message="Hello how I can help you",
     created_by_bot=1928,
     is_bot=True,
 )
 
 message13 = Message(
-    message_id=182342137765,
-    chat_id=10001,
+    message_id=1321,
+    chat_id=1011,
     message="I need you to know that can you sing or not, if not then I will leave",
     created_by_user="user1123123",
 )
 
 message14 = Message(
-    message_id=182211237765,
-    chat_id=10001,
+    message_id=1825,
+    chat_id=1011,
     message="You are amazing",
     created_by_bot=1928,
     is_bot=True,
 )
 
 message2 = Message(
-    message_id=1812342137765,
-    chat_id=100003,
+    message_id=1865,
+    chat_id=1003,
     message="Hello are you here",
     created_by_user="user1123123",
 )
 
 message21 = Message(
-    message_id=1823421337765,
-    chat_id=100003,
+    message_id=13765,
+    chat_id=1003,
     message="I can help you",
     created_by_bot=19218,
     is_bot=True,
 )
 
 message3 = Message(
-    message_id=12342137765,
-    chat_id=10004,
+    message_id=1215,
+    chat_id=1044,
     message="You are dump",
-    created_by_user="john1011",
+    created_by_user="JohnDoe123",
 )
 
 message31 = Message(
-    message_id=12342137765,
-    chat_id=10004,
+    message_id=12765,
+    chat_id=1044,
     message="You are bullying me",
     created_by_bot=19228,
     is_bot=True,
 )
 
 db.add_all([user1, user2])
-db.add_all([bot1, bot2, bot3])
+db.commit()
+
 db.add_all([voice1, voice2])
+db.commit()
+
+db.add_all([bot1, bot2, bot3])
+db.commit()
+
 db.add_all([chat1, chat12, chat3])
+db.commit()
+
 db.add_all([message1, message12, message13, message14])
+db.commit()
+
 db.add_all([message2, message21])
+db.commit()
+
 db.add_all([message3, message31])
-
-
 db.commit()
 
 db.close()

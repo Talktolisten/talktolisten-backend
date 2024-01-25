@@ -3,7 +3,8 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 
 from sqlalchemy import func
-from .. import models, schemas
+from .. import models
+from app.schemas import bot
 from ..database import get_db
 
 
@@ -13,7 +14,7 @@ router = APIRouter(
 )
 
 
-@router.get("/", response_model=List[schemas.ExploreBots])
+@router.get("/", response_model=List[bot.ExploreBots])
 def get_characters(
     db: Session = Depends(get_db), 
     limit: int = 20, 
