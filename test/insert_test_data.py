@@ -12,6 +12,7 @@ user1 = User(
     gmail="khan@gmail.com",
     first_name="Umar",
     last_name="Khan",
+    dob="1999-12-12",
     bio="Amazon intern",
     profile_picture="data/user/avatar.png",
 )
@@ -22,6 +23,7 @@ user2 = User(
     gmail="john75@gmail.com",
     first_name="John",
     last_name="Doe",
+    dob="2022-01-01",
     bio="Teacher at Apple",
     profile_picture="data/user/avatar.png",
 )

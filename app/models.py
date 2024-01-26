@@ -1,7 +1,7 @@
 from sqlalchemy.schema import Column
 from sqlalchemy import Integer, String, Boolean, ForeignKey, text
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql.sqltypes import TIMESTAMP
+from sqlalchemy.sql.sqltypes import TIMESTAMP, Date
 from .database import Base
 
 
@@ -13,6 +13,7 @@ class User(Base):
     gmail = Column(String, nullable=False,unique=True)
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
+    dob = Column(Date, nullable=True)
     created_at = Column(TIMESTAMP(timezone=True),
                         nullable=False, server_default=text('now()'))
     subscription = Column(String, nullable=False,server_default="standard")
