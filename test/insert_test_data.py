@@ -12,6 +12,7 @@ user1 = User(
     gmail="khan@gmail.com",
     first_name="Umar",
     last_name="Khan",
+    dob="1999-12-12",
     bio="Amazon intern",
     profile_picture="data/user/avatar.png",
 )
@@ -22,6 +23,7 @@ user2 = User(
     gmail="john75@gmail.com",
     first_name="John",
     last_name="Doe",
+    dob="2022-01-01",
     bio="Teacher at Apple",
     profile_picture="data/user/avatar.png",
 )
@@ -79,23 +81,20 @@ bot3 = Bot(
 
 chat1 = Chat(
     chat_id=1011,
-    user_id="umar6admin",
+    user_id="user1123123",
     bot_id1=1928,
-    # last_message=1283,
 )
 
 chat12 = Chat(
     chat_id=1003,
-    user_id="umar6admin",
+    user_id="user1123123",
     bot_id1=19218,
-    # last_message=432,
 )
 
 chat3 = Chat(
     chat_id=1044,
-    user_id="john1011",
+    user_id="JohnDoe123",
     bot_id1=19228,
-    # last_message=5313,
 )
 
 message1 = Message(
