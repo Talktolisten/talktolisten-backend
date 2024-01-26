@@ -73,7 +73,7 @@ class Chat(Base):
     __tablename__ = "chats"
     chat_id = Column(Integer, primary_key=True, nullable=False, unique=True)
     user_id = Column(String, ForeignKey(
-        "users.username", ondelete="CASCADE"), primary_key=True)
+        "users.user_id", ondelete="CASCADE"), primary_key=True)
     bot_id1 = Column(Integer, ForeignKey(
         "bots.bot_id", ondelete="CASCADE"), primary_key=True, nullable=False)
     bot_id2 = Column(Integer, ForeignKey(

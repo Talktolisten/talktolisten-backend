@@ -14,35 +14,48 @@ router = APIRouter(
 )
 
 
-# get all chats by userid
-@router.get("/{user_id}", response_model=List[chat.ChatModel])
+@router.get("/{user_id}", response_model=List[chat.ChatGet])
 def get_chats(
     user_id,
     db: Session = Depends(get_db),
-    limit: int = 20,
     skip: int = 0,
 ):
-    query = db.query(models.Chat)
-
-    query = query.filter(models.Chat.user_id == user_id)
-
-    chats = query.offset(skip).limit(limit).all()
+    chats = (
+        db.query(models.Chat)
+        .join(models.Message, models.Message.chat_id == models.Chat.chat_id, isouter=True)
+        .filter(models.Chat.user_id == user_id)
+        .order_by(models.Message.created_at.desc())
+        .offset(skip)
+        .all()
+    )
     return chats
 
 
-# create a new chat
-@router.post("/")
+@router.post("/", status_code=status.HTTP_201_CREATED)
 def create_chat(
-    chat: chat.create_chat_info,
+    chat: chat.ChatCreate,
     db: Session = Depends(get_db),
-):
-    new_chat = models.Chat(
-        chat_id=chat.chat_id,
-        user_id=chat.user_id,
-        bot_id1=chat.bot_id1,
-    )
+):  
+    new_chat = models.Chat(**chat.dict())
+    num_bots = 5
+    for i in range(2, num_bots+1):
+        if new_chat.__getattribute__(f"bot_id{i}") == 0:
+            new_chat.__setattr__(f"bot_id{i}", None)
 
     db.add(new_chat)
     db.commit()
     db.refresh(new_chat)
     return new_chat
+
+
+@router.post("delete/{chat_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_chat(
+    chat_id: int,
+    db: Session = Depends(get_db),
+):  
+    chat = db.query(models.Chat).filter(models.Chat.chat_id == chat_id).first()
+    if not chat:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Chat not found")
+    db.delete(chat)
+    db.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
