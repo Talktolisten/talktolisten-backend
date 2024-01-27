@@ -22,6 +22,3 @@ class CloneVoice(BaseModel):
 
     class Config:
         from_atributes = True
-
-
- 
