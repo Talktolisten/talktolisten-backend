@@ -4,7 +4,7 @@ from typing import List, Optional
 
 from sqlalchemy import func
 from .. import models
-from app.schemas import bot
+from app.schemas import explore
 from ..database import get_db
 
 
@@ -14,7 +14,7 @@ router = APIRouter(
 )
 
 
-@router.get("/", response_model=List[bot.ExploreBots])
+@router.get("/", response_model=List[explore.ExploreBots])
 def get_characters(
     db: Session = Depends(get_db), 
     limit: int = 20, 
@@ -32,3 +32,16 @@ def get_characters(
 
     bots = query.offset(skip).limit(limit).all()
     return bots
+
+
+@router.get("/{id}", response_model=explore.ExploreBots)
+def get_character_by_id(
+    id: int,
+    db: Session = Depends(get_db), 
+):
+    bot = db.query(models.Bot).filter(models.Bot.bot_id == id).first()
+
+    if not bot:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Bot not found")
+
+    return bot
