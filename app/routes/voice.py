@@ -28,6 +28,39 @@ def get_voice(
     return voice
 
 
+@router.get("/{id}", response_model=voice.GetVoice)
+def get_voice_by_id(
+    id: int,
+    db: Session = Depends(get_db), 
+):
+    voice = db.query(models.Voice).filter(models.Voice.voice_id == id).first()
+
+    if not voice:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Voice not found")
+
+    return voice
+
+
+@router.patch("/{id}", response_model=voice.GetVoice)
+def update_voice(
+    id: int,
+    voice_update: voice.VoiceUpdate,
+    db: Session = Depends(get_db), 
+):
+    db_voice = db.query(models.Voice).filter(models.Voice.voice_id == id).first()
+
+    if not db_voice:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Voice not found")
+
+    for var, value in voice_update.dict().items():
+        if value is not None:
+            setattr(db_voice, var, value)
+
+    db.commit()
+    db.refresh(db_voice)
+    return db_voice
+
+
 @router.post("/", status_code=status.HTTP_201_CREATED)
 def clone_voice(
     voice: voice.CloneVoice,
@@ -37,3 +70,17 @@ def clone_voice(
     #return new_voice
     return
 
+
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_voice(
+    id: int,
+    db: Session = Depends(get_db), 
+):
+    voice = db.query(models.Voice).filter(models.Voice.voice_id == id).first()
+
+    if not voice:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Voice not found")
+
+    db.delete(voice)
+    db.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

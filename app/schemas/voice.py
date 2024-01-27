@@ -22,3 +22,10 @@ class CloneVoice(BaseModel):
 
     class Config:
         from_atributes = True
+
+class VoiceUpdate(BaseModel):
+    voice_name: Optional[str]
+    voice_description: Optional[str]
+
+    class Config:
+        from_attributes = True
