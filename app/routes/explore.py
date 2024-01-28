@@ -14,7 +14,10 @@ router = APIRouter(
 )
 
 
-@router.get("/", response_model=List[explore.ExploreBots])
+@router.get("/", 
+            summary="Get all bots",
+            description="Get all bots in the database",
+            response_model=List[explore.ExploreBots])
 def get_characters(
     db: Session = Depends(get_db), 
     limit: int = 20, 

@@ -12,7 +12,10 @@ router = APIRouter(
     tags=['Voice']
 )
 
-@router.get("/", response_model=List[voice.GetVoice])
+@router.get("/", 
+            summary="Get all voices",
+            description="Get all voices",
+            response_model=List[voice.GetVoice])
 def get_voice(
     db: Session = Depends(get_db),
     limit: int = 25, 
@@ -28,7 +31,10 @@ def get_voice(
     return voice
 
 
-@router.get("/{id}", response_model=voice.GetVoice)
+@router.get("/{id}", 
+            summary="Get voice by id",
+            description="Get voice by id",
+            response_model=voice.GetVoice)
 def get_voice_by_id(
     id: int,
     db: Session = Depends(get_db), 
@@ -41,7 +47,26 @@ def get_voice_by_id(
     return voice
 
 
-@router.patch("/{id}", response_model=voice.GetVoice)
+@router.get("/user/{id}", 
+            summary="Get voice by user id",
+            description="Get voice that the user created by user id",
+            response_model=List[voice.GetVoice])
+def get_voice_by_user_id(
+    id: str,
+    db: Session = Depends(get_db), 
+):
+    voice = db.query(models.Voice).filter(models.Voice.created_by == id).all()
+
+    if not voice:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Voice not found")
+
+    return voice
+
+
+@router.patch("/{id}", 
+            summary="Update voice information by id",
+            description="Update voice information by id",
+            response_model=voice.GetVoice)
 def update_voice(
     id: int,
     voice_update: voice.VoiceUpdate,
@@ -71,7 +96,10 @@ def clone_voice(
     return
 
 
-@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{id}", 
+            summary="Delete voice by id",
+            description="Delete voice by id",
+            status_code=status.HTTP_204_NO_CONTENT)
 def delete_voice(
     id: int,
     db: Session = Depends(get_db), 

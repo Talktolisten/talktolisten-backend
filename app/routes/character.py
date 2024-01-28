@@ -13,7 +13,10 @@ router = APIRouter(
     tags=['Characters']
 )
 
-@router.get("/{userID}", response_model=List[character.BotGet])
+@router.get("/{userID}", 
+            summary="Get all characters created by user",
+            description="Get all characters created by an user",
+            response_model=List[character.BotGet])
 def get_characters(
     userID: str,
     db: Session = Depends(get_db), 
@@ -21,7 +24,10 @@ def get_characters(
     return db.query(models.Bot).filter(models.Bot.created_by == userID).all()
 
 
-@router.post("/", response_model=character.BotCreate, status_code=status.HTTP_201_CREATED)
+@router.post("/", 
+            summary="Create a new character",
+            description="Create a new character",
+            response_model=character.BotCreate, status_code=status.HTTP_201_CREATED)
 def create_character(
     bot_create: character.BotCreate,
     db: Session = Depends(get_db), 
@@ -33,7 +39,10 @@ def create_character(
     return db_bot
 
 
-@router.patch("/{id}", response_model=character.BotUpdate)
+@router.patch("/{id}", 
+            summary="Update character information",
+            description="Update character information by character id",
+            response_model=character.BotUpdate)
 def update_character(
     id: int,
     bot_update: character.BotUpdate,
@@ -53,7 +62,10 @@ def update_character(
     return db_bot
 
 
-@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{id}", 
+            summary="Delete character by id",
+            description="Delete character by character id",
+            status_code=status.HTTP_204_NO_CONTENT)
 def delete_character(
     id: int,
     db: Session = Depends(get_db), 

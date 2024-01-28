@@ -14,7 +14,10 @@ router = APIRouter(
 )
 
 
-@router.get("/{user_id}", response_model=List[chat.ChatGet])
+@router.get("/{user_id}", 
+            summary="Get all chats of an user",
+            description="Get all chats of an user by user_id",
+            response_model=List[chat.ChatGet])
 def get_chats(
     user_id,
     db: Session = Depends(get_db),
@@ -31,7 +34,10 @@ def get_chats(
     return chats
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED)
+@router.post("/", 
+            summary="Create a new chat",
+            description="Create a new chat",
+            status_code=status.HTTP_201_CREATED)
 def create_chat(
     chat: chat.ChatCreate,
     db: Session = Depends(get_db),
@@ -48,7 +54,10 @@ def create_chat(
     return new_chat
 
 
-@router.delete("/{chat_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{chat_id}", 
+            summary="Delete a chat",
+            description="Delete a chat by chat_id",
+            status_code=status.HTTP_204_NO_CONTENT)
 def delete_chat(
     chat_id: int,
     db: Session = Depends(get_db),
@@ -61,7 +70,10 @@ def delete_chat(
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
-@router.post("/{chat_id}/message", status_code=status.HTTP_201_CREATED)
+@router.post("/{chat_id}/message", 
+            summary="Create a new message for a chat",
+            description="Create a new message",
+            status_code=status.HTTP_201_CREATED)
 def create_message(
     chat_id: int,
     message: message.MessageCreate,
@@ -74,10 +86,14 @@ def create_message(
     return new_message
 
 
-@router.get("/{chat_id}/message", response_model=List[message.MessageGet])
+@router.get("/{chat_id}/message", 
+            summary="Get all messages of a chat",
+            description="Get all messages of a chat by chat_id",
+            response_model=List[message.MessageGet])
 def get_messages(
     chat_id: int,
     db: Session = Depends(get_db),
+    limit: int = 20,
     skip: int = 0,
 ):
     messages = (
@@ -85,16 +101,20 @@ def get_messages(
         .filter(models.Message.chat_id == chat_id)
         .order_by(models.Message.created_at.desc())
         .offset(skip)
-        .limit(20)
+        .limit(limit)
         .all()
     )
     return messages
 
-@router.get("/{chat_id}/{message_id}", response_model=List[message.MessageGet])
+@router.get("/{chat_id}/{message_id}", 
+            summary="Get all messages of a chat",
+            description="Get all messages of a chat by chat_id",
+            response_model=List[message.MessageGet])
 def get_messages(
     chat_id: int,
     message_id: int,
     db: Session = Depends(get_db),
+    limit: int = 20,
     skip: int = 0,
 ):
     messages = (
@@ -103,12 +123,15 @@ def get_messages(
         .filter(models.Message.message_id < message_id)
         .order_by(models.Message.created_at.desc())
         .offset(skip)
-        .limit(20)
+        .limit(limit)
         .all()
     )
     return messages
 
-@router.delete("/{chat_id}/{message_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{chat_id}/{message_id}", 
+            summary="Delete a message",
+            description="Delete a message by message_id",
+            status_code=status.HTTP_204_NO_CONTENT)
 def delete_message(
     chat_id: int,
     message_id: int,

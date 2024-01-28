@@ -35,7 +35,10 @@ def create_user(
     return new_user
 
 
-@router.get("/{id}", response_model=user.UserGet)
+@router.get("/{id}", 
+            summary="Get user information",
+            description="Get user information by user_id",
+            response_model=user.UserGet)
 def get_user(
     id: str,
     db: Session = Depends(get_db), 
@@ -49,7 +52,10 @@ def get_user(
     return user
 
 
-@router.patch("/{id}", response_model=user.UserGet)
+@router.patch("/{id}", 
+            summary="Update user information",
+            description="Update user information by user_id",
+            response_model=user.UserGet)
 def update_user(
     id: str,
     user_update: user.UserUpdate,
