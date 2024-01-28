@@ -18,7 +18,7 @@ class User(Base):
                         nullable=False, server_default=text('now()'))
     subscription = Column(String, nullable=False,server_default="standard")
     bio = Column(String, nullable=True)
-    profile_picture = Column(String, nullable=True)
+    profile_picture = Column(String, nullable=False)
     status = Column(String, nullable=False,server_default="inactive")
     theme = Column(String, nullable=False,server_default="light")
 
@@ -26,11 +26,11 @@ class User(Base):
 class Bot(Base):
     __tablename__ = "bots"
 
-    bot_id = Column(Integer, primary_key=True, nullable=False)
+    bot_id = Column(Integer, primary_key=True, nullable=False, unique=True, autoincrement=True)
     bot_name = Column(String, nullable=False)
     short_description = Column(String, nullable=True)
     description = Column(String, nullable=False)
-    profile_picture = Column(String, nullable=True)
+    profile_picture = Column(String, nullable=False)
     category = Column(String, nullable=True)
     created_at = Column(TIMESTAMP(timezone=True),
                         nullable=False, server_default=text('now()'))
@@ -39,25 +39,25 @@ class Bot(Base):
     num_chats = Column(Integer, nullable=False,server_default="0")
     likes = Column(Integer, nullable=False,server_default="0")
     created_by = Column(String, ForeignKey(
-        "users.username", ondelete="CASCADE"), nullable=False)
+        "users.user_id", ondelete="CASCADE"), nullable=False)
 
 class Voice(Base):
     __tablename__ = "voices"
 
-    voice_id = Column(Integer, primary_key=True, nullable=False)
+    voice_id = Column(Integer, primary_key=True, nullable=False, unique=True, autoincrement=True)
     voice_name = Column(String, nullable=False)
-    voice_description = Column(String, nullable=True)
+    voice_description = Column(String, nullable=False)
     voice_endpoint = Column(String, nullable=False)
     voice_provider = Column(String, nullable=False)
     created_at = Column(TIMESTAMP(timezone=True),
                         nullable=False, server_default=text('now()'))
     created_by = Column(String, ForeignKey(
-        "users.username", ondelete="CASCADE"), nullable=False)
+        "users.user_id", ondelete="CASCADE"), nullable=False)
 
 class Message(Base):
     __tablename__ = "messages"
 
-    message_id = Column(Integer, primary_key=True, nullable=False)
+    message_id = Column(Integer, primary_key=True, nullable=False, unique=True, autoincrement=True)
     chat_id = Column(Integer, ForeignKey(
         "chats.chat_id", ondelete="CASCADE"), nullable=False)
     message = Column(String, nullable=False)
@@ -71,11 +71,11 @@ class Message(Base):
     
 class Chat(Base):
     __tablename__ = "chats"
-    chat_id = Column(Integer, primary_key=True, nullable=False, unique=True)
+    chat_id = Column(Integer, primary_key=True, nullable=False, unique=True, autoincrement=True)
     user_id = Column(String, ForeignKey(
-        "users.user_id", ondelete="CASCADE"), primary_key=True)
+        "users.user_id", ondelete="CASCADE"), nullable=False)
     bot_id1 = Column(Integer, ForeignKey(
-        "bots.bot_id", ondelete="CASCADE"), primary_key=True, nullable=False)
+        "bots.bot_id", ondelete="CASCADE"), nullable=False)
     bot_id2 = Column(Integer, ForeignKey(
         "bots.bot_id", ondelete="CASCADE"), nullable=True)
     bot_id3 = Column(Integer, ForeignKey(

@@ -34,7 +34,7 @@ voice1 = Voice(
     voice_description="American Female Cute Gentle",
     voice_endpoint="https://api.elevenlabs.io/v1/text-to-speech/fsYaGCeoLOsyoKMVe1CN",
     voice_provider="eleventlabs",
-    created_by="umar6admin",
+    created_by="user1123123",
 )
 
 voice2 = Voice(
@@ -43,7 +43,7 @@ voice2 = Voice(
     voice_description="Male Strong Voice",
     voice_endpoint="https://api.elevenlabs.io/v1/text-to-speech/CwL9wIW2b1hF7QYHe1A4",
     voice_provider="eleventlabs",
-    created_by="john1011",
+    created_by="JohnDoe123",
 )
 
 bot1 = Bot(
@@ -54,7 +54,7 @@ bot1 = Bot(
     profile_picture="data/bot/avatar.png",
     category="Featured",
     voice_id=101,
-    created_by="umar6admin",
+    created_by="user1123123",
 )
 
 bot2 = Bot(
@@ -65,7 +65,7 @@ bot2 = Bot(
     profile_picture="data/bot/avatar.png",
     category="Featured",
     voice_id=101,
-    created_by="umar6admin",
+    created_by="user1123123",
 )
 
 bot3 = Bot(
@@ -76,7 +76,7 @@ bot3 = Bot(
     profile_picture="data/bot/avatar.png",
     category="Featured",
     voice_id=102,
-    created_by="john1011",
+    created_by="JohnDoe123",
 )
 
 chat1 = Chat(

@@ -48,7 +48,7 @@ def create_chat(
     return new_chat
 
 
-@router.post("delete/{chat_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("delete/{chat_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_chat(
     chat_id: int,
     db: Session = Depends(get_db),

@@ -17,7 +17,7 @@ class ChatGet(BaseModel):
 
 
 class ChatCreate(BaseModel):
-    chat_id: int
+    # chat_id: int
     user_id: str
     bot_id1: int
     bot_id2: Optional[int] = None
