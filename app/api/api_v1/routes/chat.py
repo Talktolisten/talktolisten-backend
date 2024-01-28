@@ -3,9 +3,9 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 
 from sqlalchemy import func
-from .. import models
+from app import models
 from app.schemas import chat, message
-from ..database import get_db
+from app.database import get_db
 
 
 router = APIRouter(

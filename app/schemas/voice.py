@@ -4,7 +4,7 @@ from typing import Optional
 from pydantic.types import conint
 
 
-class GetVoice(BaseModel):
+class VoiceGet(BaseModel):
     voice_id: int
     voice_name: str
     voice_description: Optional[str]
@@ -12,13 +12,10 @@ class GetVoice(BaseModel):
     class Config:
         from_attributes = True
 
-class CloneVoice(BaseModel):
-    voice_id: int
+class VoiceCreate(BaseModel):
     voice_name: str
-    voice_description: Optional[str]
-    voice_provider: str     #string from mp3 file
+    voice_description: str
     created_by: str
-
 
     class Config:
         from_atributes = True

@@ -17,7 +17,6 @@ class ChatGet(BaseModel):
 
 
 class ChatCreate(BaseModel):
-    # chat_id: int
     user_id: str
     bot_id1: int
     bot_id2: Optional[int] = None
@@ -27,8 +26,3 @@ class ChatCreate(BaseModel):
 
     class Config:
         from_attributes = True
-
-# user sent id
-class user_id(BaseModel):
-    user_id: str
-

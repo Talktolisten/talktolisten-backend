@@ -3,21 +3,21 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 
 from sqlalchemy import func
-from .. import models
-from app.schemas import character
-from ..database import get_db
+from app import models
+from app.schemas import bot
+from app.database import get_db
 
 
 router = APIRouter(
-    prefix="/characters",
-    tags=['Characters']
+    prefix="/bot",
+    tags=['bot']
 )
 
 @router.get("/{userID}", 
-            summary="Get all characters created by user",
-            description="Get all characters created by an user",
-            response_model=List[character.BotGet])
-def get_characters(
+            summary="Get all bots created by user",
+            description="Get all bots created by an user",
+            response_model=List[bot.BotGet])
+def get_bots(
     userID: str,
     db: Session = Depends(get_db), 
 ):
@@ -25,11 +25,11 @@ def get_characters(
 
 
 @router.post("/", 
-            summary="Create a new character",
-            description="Create a new character",
-            response_model=character.BotCreate, status_code=status.HTTP_201_CREATED)
-def create_character(
-    bot_create: character.BotCreate,
+            summary="Create a new bot",
+            description="Create a new bot",
+            response_model=bot.BotGet, status_code=status.HTTP_201_CREATED)
+def create_bot(
+    bot_create: bot.BotCreate,
     db: Session = Depends(get_db), 
 ):
     db_bot = models.Bot(**bot_create.dict())
@@ -40,12 +40,13 @@ def create_character(
 
 
 @router.patch("/{id}", 
-            summary="Update character information",
-            description="Update character information by character id",
-            response_model=character.BotUpdate)
-def update_character(
+            summary="Update bot information",
+            description="Update bot information by bot id",
+            response_model=bot.BotGet,
+            status_code=status.HTTP_200_OK)
+def update_bot(
     id: int,
-    bot_update: character.BotUpdate,
+    bot_update: bot.BotUpdate,
     db: Session = Depends(get_db), 
 ):
     db_bot = db.query(models.Bot).filter(models.Bot.bot_id == id).first()
@@ -63,10 +64,10 @@ def update_character(
 
 
 @router.delete("/{id}", 
-            summary="Delete character by id",
-            description="Delete character by character id",
+            summary="Delete bot by id",
+            description="Delete bot by bot id",
             status_code=status.HTTP_204_NO_CONTENT)
-def delete_character(
+def delete_bot(
     id: int,
     db: Session = Depends(get_db), 
 ):

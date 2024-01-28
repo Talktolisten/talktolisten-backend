@@ -3,9 +3,9 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 
 from sqlalchemy import func
-from .. import models
+from app import models
 from app.schemas import voice
-from ..database import get_db
+from app.database import get_db
 
 router = APIRouter(
     prefix="/voice",
@@ -15,7 +15,7 @@ router = APIRouter(
 @router.get("/", 
             summary="Get all voices",
             description="Get all voices",
-            response_model=List[voice.GetVoice])
+            response_model=List[voice.VoiceGet])
 def get_voice(
     db: Session = Depends(get_db),
     limit: int = 25, 
@@ -34,7 +34,7 @@ def get_voice(
 @router.get("/{id}", 
             summary="Get voice by id",
             description="Get voice by id",
-            response_model=voice.GetVoice)
+            response_model=voice.VoiceGet)
 def get_voice_by_id(
     id: int,
     db: Session = Depends(get_db), 
@@ -50,7 +50,7 @@ def get_voice_by_id(
 @router.get("/user/{id}", 
             summary="Get voice by user id",
             description="Get voice that the user created by user id",
-            response_model=List[voice.GetVoice])
+            response_model=List[voice.VoiceGet])
 def get_voice_by_user_id(
     id: str,
     db: Session = Depends(get_db), 
@@ -66,7 +66,7 @@ def get_voice_by_user_id(
 @router.patch("/{id}", 
             summary="Update voice information by id",
             description="Update voice information by id",
-            response_model=voice.GetVoice)
+            response_model=voice.VoiceGet)
 def update_voice(
     id: int,
     voice_update: voice.VoiceUpdate,
@@ -86,14 +86,23 @@ def update_voice(
     return db_voice
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED)
+@router.post("/", 
+            summary="Create / Clone new voice",
+            description="Clone new voice using EleventLabs",
+            response_model=voice.VoiceGet,
+            status_code=status.HTTP_201_CREATED)
 def clone_voice(
-    voice: voice.CloneVoice,
+    voice: voice.VoiceCreate,
     db: Session = Depends(get_db), 
 ):
-    #send to ML model
-    #return new_voice
-    return
+    voice = models.Voice(**voice.dict())
+    voice.voice_endpoint = "voice_endpoint"
+    voice.voice_provider = "eleventlabs"
+
+    db.add(voice)
+    db.commit()
+    db.refresh(voice)
+    return voice
 
 
 @router.delete("/{id}", 

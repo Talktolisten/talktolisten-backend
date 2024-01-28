@@ -23,9 +23,9 @@ venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4. Run the server
+4. Run the server (for development only)
 ```bash
-unicorn app.main:app --reload
+uvicorn app.main:app --reload
 ```
 
 or
@@ -33,7 +33,7 @@ or
 python3 server.py
 ```
 
-## Other commands
+## Migration with Alembic
 1. Update database using
 ```bash
 alembic revision --autogenerate -m "Commit message"
@@ -43,4 +43,9 @@ then
 
 ```bash
 alembic upgrade head
+```
+
+## Run tests
+```bash
+pytest -v -s
 ```
