@@ -4,7 +4,7 @@ from typing import List, Optional
 
 from sqlalchemy import func
 from .. import models
-from app.schemas import chat
+from app.schemas import chat, message
 from ..database import get_db
 
 
@@ -48,7 +48,7 @@ def create_chat(
     return new_chat
 
 
-@router.delete("delete/{chat_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{chat_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_chat(
     chat_id: int,
     db: Session = Depends(get_db),
@@ -57,5 +57,66 @@ def delete_chat(
     if not chat:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Chat not found")
     db.delete(chat)
+    db.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.post("/{chat_id}/message", status_code=status.HTTP_201_CREATED)
+def create_message(
+    chat_id: int,
+    message: message.MessageCreate,
+    db: Session = Depends(get_db),
+):  
+    new_message = models.Message(**message.dict(), chat_id=chat_id)
+    db.add(new_message)
+    db.commit()
+    db.refresh(new_message)
+    return new_message
+
+
+@router.get("/{chat_id}/message", response_model=List[message.MessageGet])
+def get_messages(
+    chat_id: int,
+    db: Session = Depends(get_db),
+    skip: int = 0,
+):
+    messages = (
+        db.query(models.Message)
+        .filter(models.Message.chat_id == chat_id)
+        .order_by(models.Message.created_at.desc())
+        .offset(skip)
+        .limit(20)
+        .all()
+    )
+    return messages
+
+@router.get("/{chat_id}/{message_id}", response_model=List[message.MessageGet])
+def get_messages(
+    chat_id: int,
+    message_id: int,
+    db: Session = Depends(get_db),
+    skip: int = 0,
+):
+    messages = (
+        db.query(models.Message)
+        .filter(models.Message.chat_id == chat_id)
+        .filter(models.Message.message_id < message_id)
+        .order_by(models.Message.created_at.desc())
+        .offset(skip)
+        .limit(20)
+        .all()
+    )
+    return messages
+
+@router.delete("/{chat_id}/{message_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_message(
+    chat_id: int,
+    message_id: int,
+    db: Session = Depends(get_db),
+):  
+    message = db.query(models.Message).filter(models.Message.message_id == message_id).first()
+    if not message:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Message not found")
+    db.delete(message)
     db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)

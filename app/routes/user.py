@@ -14,7 +14,11 @@ router = APIRouter(
 )
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED)
+@router.post("/signup", 
+            summary="Create a new user",
+            description="Create a new user after Signup screen",
+            response_model=user.UserGet,
+            status_code=status.HTTP_201_CREATED)
 def create_user(
     user: user.UserCreate,
     db: Session = Depends(get_db), 
@@ -26,6 +30,8 @@ def create_user(
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
+
+    new_user.dob = utils.format_dob_str(new_user.dob)
     return new_user
 
 

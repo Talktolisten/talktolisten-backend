@@ -18,13 +18,3 @@ class ExploreBots(BaseModel):
 
     class Config:
         from_attributes = True
-
-
-class BotUpdate(BaseModel):
-    bot_name: Optional[str]
-    short_description: Optional[str]
-    description: Optional[str]
-    voice_id: Optional[int]
-
-    class Config:
-        from_attributes = True

@@ -10,6 +10,7 @@ class UserCreate(BaseModel):
     gmail: str
     first_name: str
     last_name: str
+    profile_picture: str
     dob: Optional[str]
 
     class Config:
