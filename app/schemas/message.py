@@ -4,8 +4,6 @@ from datetime import datetime
 
 
 class MessageCreate(BaseModel):
-    user_id: str
-    bot_id: int
     message: str
     created_by_user: Optional[str] = None
     created_by_bot: Optional[str] = None
@@ -18,10 +16,10 @@ class MessageGet(BaseModel):
     message_id: int
     chat_id: int
     user_id: str
-    bot_id: str
+    bot_id: int
     message: str
     created_by_user: Optional[str]
-    created_by_bot: Optional[str]
+    created_by_bot: Optional[int]
     is_bot: bool
     created_at: datetime
 

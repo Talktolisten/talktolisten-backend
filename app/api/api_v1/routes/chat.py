@@ -79,7 +79,15 @@ def create_message(
     message: message.MessageCreate,
     db: Session = Depends(get_db),
 ):  
-    new_message = models.Message(**message.dict(), chat_id=chat_id)
+    
+    db_chat = db.query(models.Chat).filter(models.Chat.chat_id == chat_id).first()
+    if not db_chat:
+        raise HTTPException(status_code=404, detail="Chat not found")
+
+    new_message_data = message.dict()
+    new_message_data["chat_id"] = chat_id
+    new_message = models.Message(**new_message_data)
+
     db.add(new_message)
     db.commit()
     db.refresh(new_message)
@@ -97,20 +105,68 @@ def get_messages(
     skip: int = 0,
 ):
     messages = (
-        db.query(models.Message)
+        db.query(
+            models.Message.message_id,
+            models.Message.chat_id,
+            models.Message.message,
+            models.Message.created_at,
+            models.Message.created_by_user,
+            models.Message.created_by_bot,
+            models.Message.is_bot,
+            models.Chat.user_id,
+            models.Chat.bot_id1.label('bot_id')
+        )
+        .join(models.Chat, models.Message.chat_id == models.Chat.chat_id)
         .filter(models.Message.chat_id == chat_id)
         .order_by(models.Message.created_at.desc())
         .offset(skip)
         .limit(limit)
+        .yield_per(30)
         .all()
     )
-    return messages
+
+    return [
+        message.MessageGet(
+            message_id=msg.message_id,
+            chat_id=msg.chat_id,
+            message=msg.message,
+            created_at=msg.created_at,
+            created_by_user=msg.created_by_user,
+            created_by_bot=msg.created_by_bot,
+            is_bot=msg.is_bot,
+            user_id=msg.user_id,
+            bot_id=msg.bot_id
+        ) for msg in messages
+    ]
+
 
 @router.get("/{chat_id}/{message_id}", 
-            summary="Get all messages of a chat",
-            description="Get all messages of a chat by chat_id",
+            summary="Get a specific message in a chat",
+            description="Get a specific message in a chat",
+            response_model=message.MessageGet)
+def get_message(
+    chat_id: int,
+    message_id: int,
+    db: Session = Depends(get_db),
+):
+    message = (
+        db.query(models.Message)
+        .filter(models.Message.chat_id == chat_id)
+        .filter(models.Message.message_id == message_id)
+        .first()
+    )
+
+    if message is None:
+        raise HTTPException(status_code=404, detail="Message not found")
+
+    return message
+
+
+@router.get("/{chat_id}/{message_id}", 
+            summary="Get older messages in a chat",
+            description="Get messages older than a specific message in a chat",
             response_model=List[message.MessageGet])
-def get_messages(
+def get_older_messages(
     chat_id: int,
     message_id: int,
     db: Session = Depends(get_db),
@@ -118,15 +174,38 @@ def get_messages(
     skip: int = 0,
 ):
     messages = (
-        db.query(models.Message)
-        .filter(models.Message.chat_id == chat_id)
-        .filter(models.Message.message_id < message_id)
+        db.query(
+            models.Message.message_id,
+            models.Message.chat_id,
+            models.Message.message,
+            models.Message.created_at,
+            models.Message.created_by_user,
+            models.Message.created_by_bot,
+            models.Message.is_bot,
+            models.Chat.user_id,
+            models.Chat.bot_id1.label('bot_id')
+        )
+        .join(models.Chat, models.Message.chat_id == models.Chat.chat_id)
+        .filter(models.Message.chat_id == chat_id, models.Message.message_id < message_id)
         .order_by(models.Message.created_at.desc())
         .offset(skip)
         .limit(limit)
         .all()
     )
-    return messages
+
+    return [
+        message.MessageGet(
+            message_id=msg.message_id,
+            chat_id=msg.chat_id,
+            message=msg.message,
+            created_at=msg.created_at,
+            created_by_user=msg.created_by_user,
+            created_by_bot=msg.created_by_bot,
+            is_bot=msg.is_bot,
+            user_id=msg.user_id,
+            bot_id=msg.bot_id
+        ) for msg in messages
+    ]
 
 @router.delete("/{chat_id}/{message_id}", 
             summary="Delete a message",

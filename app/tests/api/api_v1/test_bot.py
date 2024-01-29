@@ -24,7 +24,6 @@ def test_create_bot(client: TestClient, db: Session) -> None:
         json=bot_data,
     )
     content = response.json()
-    print(content)
     assert response.status_code == 201
     assert content["bot_name"] == bot_data["bot_name"]
     assert "bot_id" in content, f"'bot_id' is not in response"
@@ -104,7 +103,6 @@ def test_update_bot(client: TestClient, db: Session) -> None:
     assert content["category"] == bot_data["category"]
     assert content["voice_id"] == bot_data["voice_id"]
     assert content["created_by"] == bot_data["created_by"]
-    print(content)
     bot_update_data = {
         "bot_name": "Ammelia",
         "short_description": "Fun bot",
