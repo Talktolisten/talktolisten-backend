@@ -6,7 +6,6 @@ from app.utils import format_dob_str
 
 
 def test_create_user(client: TestClient, db: Session) -> None:
-    # create random user
     username = random_lower_string()
     gmail = random_email()
     first_name = random_lower_string()
@@ -22,7 +21,6 @@ def test_create_user(client: TestClient, db: Session) -> None:
         "profile_picture": profile_picture,
     }
 
-    # test user creation
     response = client.post(f"{settings.API_VERSION}/user/signup", json=user)
     assert response.status_code == 201
     data = response.json()
@@ -40,7 +38,6 @@ def test_create_user(client: TestClient, db: Session) -> None:
 
 def test_get_user(client: TestClient, db: Session) -> None:
 
-    # create random user
     username = random_lower_string()
     gmail = random_email()
     first_name = random_lower_string()
@@ -56,11 +53,9 @@ def test_get_user(client: TestClient, db: Session) -> None:
         "profile_picture": profile_picture,
     }
 
-    # create user
     response = client.post(f"{settings.API_VERSION}/user/signup", json=user)
     data = response.json()
 
-    # test get user
     response = client.get(f"{settings.API_VERSION}/user/{data['user_id']}")
     assert response.status_code == 200
     data = response.json()
@@ -77,7 +72,6 @@ def test_get_user(client: TestClient, db: Session) -> None:
 
 
 def test_update_user(client: TestClient, db: Session) -> None:
-    # create random user
     username = random_lower_string()
     gmail = random_email()
     first_name = random_lower_string()
@@ -93,11 +87,9 @@ def test_update_user(client: TestClient, db: Session) -> None:
         "profile_picture": profile_picture,
     }
 
-    # create user
     response = client.post(f"{settings.API_VERSION}/user/signup", json=user)
     data = response.json()
 
-    # update user
     user_update = {
         "username": random_lower_string(),
         "gmail": random_email(),
