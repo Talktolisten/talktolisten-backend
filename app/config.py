@@ -9,6 +9,8 @@ class Settings(BaseSettings):
     
     API_VERSION: str = "/api/v1"
 
+    firebase_json_name: str
+    
     class Config:
         env_file = ".env"
 
