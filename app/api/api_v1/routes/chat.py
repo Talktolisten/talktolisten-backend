@@ -6,6 +6,7 @@ from sqlalchemy import func, select
 from app import models
 from app.schemas import chat, message
 from app.database import get_db
+from app.auth import get_current_user
 
 
 router = APIRouter(
@@ -20,8 +21,9 @@ router = APIRouter(
             response_model=List[chat.ChatGet])
 def get_chats(
     user_id,
-    db: Session = Depends(get_db),
     skip: int = 0,
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user),
 ):
     stmt = (
         select(models.Chat.chat_id, models.Chat.user_id, models.Bot.bot_id,
@@ -55,7 +57,9 @@ def get_chats(
 def create_chat(
     chat: chat.ChatCreate,
     db: Session = Depends(get_db),
-):
+    current_user: str = Depends(get_current_user),
+):  
+
     new_chat = models.Chat(**chat.dict())
     num_bots = 5
     for i in range(2, num_bots+1):
@@ -75,7 +79,8 @@ def create_chat(
 def delete_chat(
     chat_id: int,
     db: Session = Depends(get_db),
-):
+    current_user: str = Depends(get_current_user),
+):  
     chat = db.query(models.Chat).filter(models.Chat.chat_id == chat_id).first()
     if not chat:
         raise HTTPException(
@@ -93,10 +98,11 @@ def create_message(
     chat_id: int,
     message: message.MessageCreate,
     db: Session = Depends(get_db),
-):
+    current_user: str = Depends(get_current_user),
+):  
+    
+    db_chat = db.query(models.Chat).filter(models.Chat.chat_id == chat_id).first()
 
-    db_chat = db.query(models.Chat).filter(
-        models.Chat.chat_id == chat_id).first()
     if not db_chat:
         raise HTTPException(status_code=404, detail="Chat not found")
 
@@ -116,9 +122,10 @@ def create_message(
             response_model=List[message.MessageGet])
 def get_messages(
     chat_id: int,
-    db: Session = Depends(get_db),
     limit: int = 20,
     skip: int = 0,
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user),
 ):
     messages = (
         db.query(
@@ -164,6 +171,7 @@ def get_message(
     chat_id: int,
     message_id: int,
     db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user),
 ):
     message = (
         db.query(models.Message)
@@ -185,9 +193,10 @@ def get_message(
 def get_older_messages(
     chat_id: int,
     message_id: int,
-    db: Session = Depends(get_db),
     limit: int = 20,
     skip: int = 0,
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user),
 ):
     messages = (
         db.query(
@@ -232,9 +241,10 @@ def delete_message(
     chat_id: int,
     message_id: int,
     db: Session = Depends(get_db),
-):
-    message = db.query(models.Message).filter(
-        models.Message.message_id == message_id).first()
+    current_user: str = Depends(get_current_user),
+):  
+    message = db.query(models.Message).filter(models.Message.message_id == message_id).first()
+
     if not message:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Message not found")

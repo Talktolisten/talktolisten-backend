@@ -6,6 +6,7 @@ from sqlalchemy import func
 from app import models
 from app.schemas import explore
 from app.database import get_db
+from app.auth import get_current_user
 
 
 router = APIRouter(
@@ -19,10 +20,11 @@ router = APIRouter(
             description="Get all bots in the database",
             response_model=List[explore.ExploreBots])
 def get_bots(
-    db: Session = Depends(get_db), 
     limit: int = 20, 
-    skip: int = 0
-):
+    skip: int = 0,
+    current_user: dict= Depends(get_current_user),
+    db: Session = Depends(get_db), 
+):  
     bots = db.query(models.Bot).offset(skip).limit(limit).all()
     return bots
 
@@ -34,6 +36,7 @@ def search_bots(
     search: str,
     limit: int = 20, 
     skip: int = 0, 
+    current_user: dict= Depends(get_current_user),
     db: Session = Depends(get_db), 
 ):
     bots = db.query(models.Bot).filter(models.Bot.bot_name.contains(search)).offset(skip).limit(limit).all()
@@ -47,6 +50,7 @@ def get_bots_by_category(
     category: str,
     limit: int = 20, 
     skip: int = 0, 
+    current_user: dict= Depends(get_current_user),
     db: Session = Depends(get_db), 
 ):
     bots = db.query(models.Bot).filter(models.Bot.category == category).offset(skip).limit(limit).all()
@@ -56,6 +60,7 @@ def get_bots_by_category(
 @router.get("/{id}", response_model=explore.ExploreBots)
 def get_bot_by_id(
     id: int,
+    current_user: dict= Depends(get_current_user),
     db: Session = Depends(get_db), 
 ):
     bot = db.query(models.Bot).filter(models.Bot.bot_id == id).first()

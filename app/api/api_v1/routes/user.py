@@ -7,6 +7,7 @@ from app import models
 from app.schemas import user
 from app.database import get_db
 import app.utils as utils
+from app.auth import get_current_user
 
 router = APIRouter(
     prefix="/user",
@@ -42,6 +43,7 @@ def create_user(
 def get_user(
     id: str,
     db: Session = Depends(get_db), 
+    user_id: Optional[str] = Depends(get_current_user)
 ):
     user = db.query(models.User).filter(models.User.user_id == id).first()
 
@@ -60,6 +62,7 @@ def update_user(
     id: str,
     user_update: user.UserUpdate,
     db: Session = Depends(get_db), 
+    user_id: Optional[str] = Depends(get_current_user)
 ):
     db_user = db.query(models.User).filter(models.User.user_id == id).first()
 

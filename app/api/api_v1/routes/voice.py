@@ -6,6 +6,7 @@ from sqlalchemy import func
 from app import models
 from app.schemas import voice
 from app.database import get_db
+from app.auth import get_current_user
 
 router = APIRouter(
     prefix="/voice",
@@ -17,10 +18,11 @@ router = APIRouter(
             description="Get all voices",
             response_model=List[voice.VoiceGet])
 def get_voice(
-    db: Session = Depends(get_db),
     limit: int = 25, 
     skip: int = 0, 
-    search: Optional[str] = None 
+    search: Optional[str] = None, 
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user)
 ):
     query = db.query(models.Voice)
 
@@ -38,6 +40,7 @@ def get_voice(
 def get_voice_by_id(
     id: int,
     db: Session = Depends(get_db), 
+    current_user: str = Depends(get_current_user)
 ):
     voice = db.query(models.Voice).filter(models.Voice.voice_id == id).first()
 
@@ -54,6 +57,7 @@ def get_voice_by_id(
 def get_voice_by_user_id(
     id: str,
     db: Session = Depends(get_db), 
+    current_user: str = Depends(get_current_user)
 ):
     voice = db.query(models.Voice).filter(models.Voice.created_by == id).all()
 
@@ -71,6 +75,7 @@ def update_voice(
     id: int,
     voice_update: voice.VoiceUpdate,
     db: Session = Depends(get_db), 
+    current_user: str = Depends(get_current_user)
 ):
     db_voice = db.query(models.Voice).filter(models.Voice.voice_id == id).first()
 
@@ -94,6 +99,7 @@ def update_voice(
 def clone_voice(
     voice: voice.VoiceCreate,
     db: Session = Depends(get_db), 
+    current_user: str = Depends(get_current_user)
 ):
     voice = models.Voice(**voice.dict())
     voice.voice_endpoint = "voice_endpoint"
@@ -112,6 +118,7 @@ def clone_voice(
 def delete_voice(
     id: int,
     db: Session = Depends(get_db), 
+    current_user: str = Depends(get_current_user)
 ):
     voice = db.query(models.Voice).filter(models.Voice.voice_id == id).first()
 

@@ -6,6 +6,7 @@ from sqlalchemy import func
 from app import models
 from app.schemas import bot
 from app.database import get_db
+from app.auth import get_current_user
 
 
 router = APIRouter(
@@ -20,6 +21,7 @@ router = APIRouter(
 def get_bots(
     userID: str,
     db: Session = Depends(get_db), 
+    current_user: str = Depends(get_current_user)
 ):
     return db.query(models.Bot).filter(models.Bot.created_by == userID).all()
 
@@ -31,6 +33,7 @@ def get_bots(
 def create_bot(
     bot_create: bot.BotCreate,
     db: Session = Depends(get_db), 
+    current_user: str = Depends(get_current_user)
 ):
     db_bot = models.Bot(**bot_create.dict())
     db.add(db_bot)
@@ -48,6 +51,7 @@ def update_bot(
     id: int,
     bot_update: bot.BotUpdate,
     db: Session = Depends(get_db), 
+    current_user: str = Depends(get_current_user)
 ):
     db_bot = db.query(models.Bot).filter(models.Bot.bot_id == id).first()
 
@@ -70,6 +74,7 @@ def update_bot(
 def delete_bot(
     id: int,
     db: Session = Depends(get_db), 
+    current_user: str = Depends(get_current_user)
 ):
     bot = db.query(models.Bot).filter(models.Bot.bot_id == id).first()
 
