@@ -4,7 +4,21 @@ from typing import Optional
 from fastapi import Depends, HTTPException, status, Header
 from app.config import settings
 
-cred = credentials.Certificate(f"app/{settings.firebase_json_name}")
+fb_credentials = {
+  "type": settings.fb_type,
+  "project_id": settings.fb_project_id,
+  "private_key_id": settings.fb_private_key_id,
+  "private_key": settings.fb_private_key.replace('\\n', '\n'),
+  "client_email": settings.fb_client_email,
+  "client_id": settings.fb_client_id,
+  "auth_uri": settings.fb_auth_uri,
+  "token_uri": settings.fb_token_uri,
+  "auth_provider_x509_cert_url": settings.fb_auth_provider_x509_cert_url,
+  "client_x509_cert_url": settings.fb_client_x509_cert_url,
+  "universe_domain": settings.fb_universe_domain,
+}
+
+cred = credentials.Certificate(fb_credentials)
 default_app = firebase_admin.initialize_app(cred)
 
 
