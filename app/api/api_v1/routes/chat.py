@@ -1,13 +1,14 @@
-from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
+from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter, UploadFile, File
 from sqlalchemy.orm import Session
 from typing import List, Optional
-
+import os
 from sqlalchemy import func, select
 from app import models
 from app.schemas import chat, message
 from app.database import get_db
 from app.auth import get_current_user
-
+from app.api.api_v1.dependency.utils import convert_m4a_to_wav, save_wav, concatenate_wav_files, azure_speech_to_text, get_ml_response, check_ml_response, get_audio_response
+from app.api.api_v1.dependency.vad import isSpeaking
 
 router = APIRouter(
     prefix="/chat",
@@ -251,3 +252,75 @@ def delete_message(
     db.delete(message)
     db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+AUDIO_CONCAT_NUM = 0
+CONTAIN_AUDIO = False
+prefix = "app/api/api_v1/dependency/temp_audio/"
+
+@router.post("/process_audio/{chat_id}",
+            summary="Process audio",
+            description="Process audio",
+            status_code=status.HTTP_200_OK)
+async def process_audio(
+    chat_id: int,
+    bot_id: int,
+    audio: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    # current_user: str = Depends(get_current_user)
+    ):
+    if audio.content_type not in ["audio/m4a", "audio/x-m4a"]:
+        raise HTTPException(status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, detail="Unsupported audio format")
+
+    try:
+        global CONTAIN_AUDIO
+        global AUDIO_CONCAT_NUM
+        need_response = False
+        temp_file_path = f"{prefix}{chat_id}_{audio.filename}"
+        with open(temp_file_path, "wb+") as file_object:
+            file_object.write(audio.file.read())
+        print(f"Audio saved to {temp_file_path}")
+        wav_temp_file_path = f"{prefix}{chat_id}_temp_audio.wav"
+        # Convert m4a to wav
+        convert_m4a_to_wav(temp_file_path, wav_temp_file_path)
+        os.remove(temp_file_path)
+        print("wav path in", wav_temp_file_path)
+        # Process audio using your VAD module
+        vad_results = isSpeaking(wav_temp_file_path)
+        print("here", vad_results)
+        print(AUDIO_CONCAT_NUM, CONTAIN_AUDIO)
+        if vad_results:
+            save_wav(wav_temp_file_path, f"{prefix}concat_audios/{chat_id}{AUDIO_CONCAT_NUM}.wav")
+            AUDIO_CONCAT_NUM += 1
+            CONTAIN_AUDIO = True
+        else:
+            if CONTAIN_AUDIO:
+                concatlist = []
+                for i in range(AUDIO_CONCAT_NUM):
+                    concatlist.append(f"{prefix}concat_audios/{chat_id}{i}.wav")
+                audio_to_translate = concatenate_wav_files(concatlist, chat_id)
+                for i in range(AUDIO_CONCAT_NUM):
+                    os.remove(f"{prefix}concat_audios/{chat_id}{i}.wav")
+                need_response = True
+                
+            CONTAIN_AUDIO = False
+            AUDIO_CONCAT_NUM = 0
+        os.remove(wav_temp_file_path)
+        if need_response:
+            print(audio_to_translate)
+            text_translation = azure_speech_to_text(audio_to_translate)
+            os.remove(audio_to_translate)
+            bot = db.query(models.Bot).filter(models.Bot.bot_id == bot_id).first()
+            job_id = get_ml_response(bot.description, text_translation)
+            if job_id:
+                ml_response = await check_ml_response(job_id)
+            # output_audio = f'{prefix}output_audio/{chat_id}.wav'
+            # get_audio_response(ml_response, output_audio)
+            return {"is_response": True, "response": ml_response}
+        # Return the VAD results
+
+        user_start_speaking = True if AUDIO_CONCAT_NUM > 0 else False
+        return {"is_response": False, "user_start_speaking": user_start_speaking}
+
+    except Exception as e:
+        # Handle exceptions raised during processing
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))

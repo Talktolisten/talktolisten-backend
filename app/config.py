@@ -22,6 +22,14 @@ class Settings(BaseSettings):
     fb_client_x509_cert_url: str
     fb_universe_domain: str
     
+    # Azure credentials
+    speech_key: str
+    speech_region: str
+
+    # Runpod credentials
+    runpod_endpoint: str
+    runpod_api_key: str
+    
     class Config:
         env_file = ".env"
 
