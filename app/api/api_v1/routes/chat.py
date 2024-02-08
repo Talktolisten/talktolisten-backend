@@ -268,7 +268,7 @@ async def process_audio(
     db: Session = Depends(get_db),
     # current_user: str = Depends(get_current_user)
     ):
-    if audio.content_type not in ["audio/m4a", "audio/x-m4a"]:
+    if audio.content_type not in ["audio/m4a", "audio/x-m4a", "audio/mp4"]:
         raise HTTPException(status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, detail="Unsupported audio format")
 
     try:

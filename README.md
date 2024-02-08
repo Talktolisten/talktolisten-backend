@@ -50,7 +50,13 @@ alembic upgrade head
 pytest -v -s
 ```
 
-## Docker run
+## Docker build and run
+1. Build
+```bash
+docker build -t ttl-backend .
+```
+
+2. Run
 ```bash
 docker run --env-file .env -p 8000:8000 ttl-backend
 ```
