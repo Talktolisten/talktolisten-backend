@@ -40,4 +40,4 @@ firebase-admin==6.4.0
 pydub==0.25.1
 webrtcvad==2.0.10
 librosa==0.10.1
-elevenlabs=0.2.27
+elevenlabs==0.2.27
