@@ -120,7 +120,7 @@ async def check_ml_response(job_id):
         print(f"An error occurred: {e}")
         return None
     
-def get_audio_response(text, output_audio, bot_id = None):
+def get_audio_response(text, output_audio = None, bot_id = None):
     audio = generate(
         text=text,
         voice=Voice(
@@ -128,8 +128,10 @@ def get_audio_response(text, output_audio, bot_id = None):
             settings=VoiceSettings(stability=0.71, similarity_boost=0.5, style=0.0, use_speaker_boost=True)
         )
     )
-    with open(output_audio, 'wb') as f:
-        f.write(audio)
+    # with open(output_audio, 'wb') as f:
+    #     f.write(audio)
+    audio_base64 = base64.b64encode(audio).decode('utf-8')
+    return audio_base64
 
-# get_audio_response("Hello! My name is Bella.", 1, 1)
+# print(get_audio_response("Hello! My name is Bella.", 'output.wav', 1))
 

@@ -358,9 +358,8 @@ async def process_audio(
         job_id = get_ml_response(bot.description, text_translation)
         if job_id:
             ml_response = await check_ml_response(job_id)
-        # output_audio = f'{prefix}output_audio/{chat_id}.wav'
-        # get_audio_response(ml_response, output_audio)
-        return {"is_response": True, "response": ml_response}
+        output_audio = get_audio_response(ml_response)
+        return {"is_response": True, "response": output_audio}
 
 
     except Exception as e:
