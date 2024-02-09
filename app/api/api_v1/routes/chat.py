@@ -122,7 +122,6 @@ async def create_message(
         ml_response = await check_ml_response(job_id)
     new_message.message = ml_response
     new_message.is_bot = True
-    new_message.created_at = func.now()
     return new_message
 
 
