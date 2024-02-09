@@ -4,6 +4,10 @@ import requests
 from pydub import AudioSegment
 import wave
 import asyncio
+import base64
+
+def decode_base64(base64_string):
+    return base64.b64decode(base64_string)
 
 def convert_m4a_to_wav(input_file, output_file):
     audio = AudioSegment.from_file(input_file, format="m4a")

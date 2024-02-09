@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter, UploadFile, File
+from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter, Body
 from sqlalchemy.orm import Session
 from typing import List, Optional
 import os
@@ -7,7 +7,7 @@ from app import models
 from app.schemas import chat, message
 from app.database import get_db
 from app.auth import get_current_user
-from app.api.api_v1.dependency.utils import convert_m4a_to_wav, save_wav, concatenate_wav_files, azure_speech_to_text, get_ml_response, check_ml_response, get_audio_response
+from app.api.api_v1.dependency.utils import convert_m4a_to_wav, save_wav, concatenate_wav_files, azure_speech_to_text, get_ml_response, check_ml_response, get_audio_response, decode_base64
 from app.api.api_v1.dependency.vad import isSpeaking
 
 router = APIRouter(
@@ -262,22 +262,23 @@ prefix = "app/api/api_v1/dependency/temp_audio/"
             description="Process audio",
             status_code=status.HTTP_200_OK)
 async def process_audio(
-    chat_id: int,
-    bot_id: int,
-    audio: UploadFile = File(...),
+    voice_chat: chat.VoiceChat = Body(...),
     db: Session = Depends(get_db),
     # current_user: str = Depends(get_current_user)
     ):
-    if audio.content_type not in ["audio/m4a", "audio/x-m4a", "audio/mp4"]:
-        raise HTTPException(status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, detail="Unsupported audio format")
 
     try:
         global CONTAIN_AUDIO
         global AUDIO_CONCAT_NUM
         need_response = False
-        temp_file_path = f"{prefix}{chat_id}_{audio.filename}"
+        audio = voice_chat.audio
+        chat_id = voice_chat.chat_id
+        bot_id = voice_chat.bot_id
+        temp_file_path = f"{prefix}{chat_id}_temp_audio.m4a"
+        print(temp_file_path)
+        m4a_file = decode_base64(audio)
         with open(temp_file_path, "wb+") as file_object:
-            file_object.write(audio.file.read())
+            file_object.write(m4a_file)
         print(f"Audio saved to {temp_file_path}")
         wav_temp_file_path = f"{prefix}{chat_id}_temp_audio.wav"
         # Convert m4a to wav

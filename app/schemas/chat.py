@@ -28,3 +28,12 @@ class ChatCreate(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class VoiceChat(BaseModel):
+    chat_id: int
+    bot_id: int
+    audio: str
+
+    class Config:
+        from_attributes = True
