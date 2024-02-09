@@ -114,17 +114,16 @@ async def create_message(
     db.add(new_message)
     db.commit()
     db.refresh(new_message)
+
     bot_id = db_chat.bot_id1
     bot_description = db.query(models.Bot).filter(models.Bot.bot_id == bot_id).first().description
     job_id = get_ml_response(bot_description, new_message.message)
     if job_id:
         ml_response = await check_ml_response(job_id)
-    response = {
-        "message": ml_response,
-        "created_by_bot": bot_id,
-        "is_bot": True,
-    }
-    return response
+    new_message.message = ml_response
+    new_message.is_bot = True
+    new_message.created_at = func.now()
+    return new_message
 
 
 @router.get("/{chat_id}/message",
