@@ -95,7 +95,7 @@ def delete_chat(
              summary="Create a new message for a chat",
              description="Create a new message",
              status_code=status.HTTP_201_CREATED)
-def create_message(
+async def create_message(
     chat_id: int,
     message: message.MessageCreate,
     db: Session = Depends(get_db),
@@ -114,7 +114,17 @@ def create_message(
     db.add(new_message)
     db.commit()
     db.refresh(new_message)
-    return new_message
+    bot_id = db_chat.bot_id1
+    bot_description = db.query(models.Bot).filter(models.Bot.bot_id == bot_id).first().description
+    job_id = get_ml_response(bot_description, new_message.message)
+    if job_id:
+        ml_response = await check_ml_response(job_id)
+    response = {
+        "message": ml_response,
+        "created_by_bot": bot_id,
+        "is_bot": True,
+    }
+    return response
 
 
 @router.get("/{chat_id}/message",
