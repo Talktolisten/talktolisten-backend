@@ -124,10 +124,11 @@ def delete_chat(
 @router.post("/{chat_id}/message",
              summary="Create a new message for a chat",
              description="Create a new message",
+             response_model=message.MessageGet,
              status_code=status.HTTP_201_CREATED)
 async def create_message(
     chat_id: int,
-    message: message.MessageCreate,
+    message_obj: message.MessageCreate,
     db: Session = Depends(get_db),
     current_user: str = Depends(get_current_user),
 ):  
@@ -137,7 +138,7 @@ async def create_message(
     if not db_chat:
         raise HTTPException(status_code=404, detail="Chat not found")
 
-    new_message_data = message.dict()
+    new_message_data = message_obj.dict()
     new_message_data["chat_id"] = chat_id
     new_message = models.Message(**new_message_data)
 
@@ -159,7 +160,6 @@ async def create_message(
 
     # Update last message in the chat
     db_chat.last_message = bot_response.message_id
-    print(db_chat.last_message)
 
     # Update number of interations with bots
     db_bot.num_chats += 1
@@ -167,8 +167,18 @@ async def create_message(
 
     db.refresh(db_chat)
     db.refresh(db_bot)
-
-    return bot_response
+    
+    return message.MessageGet(
+        message_id=bot_response.message_id,
+        chat_id=bot_response.chat_id,
+        user_id=db_chat.user_id,
+        bot_id=bot_id,
+        message=bot_response.message,
+        created_at=bot_response.created_at,
+        created_by_user=bot_response.created_by_user,
+        created_by_bot=bot_response.created_by_bot,
+        is_bot=bot_response.is_bot
+    )
 
 
 @router.get("/{chat_id}/message",
