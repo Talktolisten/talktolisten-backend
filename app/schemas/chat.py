@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
-
+from datetime import datetime
 
 class ChatGet(BaseModel):
     chat_id: int
@@ -12,7 +12,8 @@ class ChatGet(BaseModel):
     bot_id3: Optional[int] = None
     bot_id4: Optional[int] = None
     bot_id5: Optional[int] = None
-    last_message: Optional[int] = None
+    last_message_content: Optional[str] = None
+    last_message_time: Optional[datetime] = None
 
     class Config:
         from_attributes = True

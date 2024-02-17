@@ -2,7 +2,7 @@ from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
 from sqlalchemy.orm import Session
 from typing import List, Optional
 import os
-from sqlalchemy import func, select
+from sqlalchemy import func
 from app import models
 from app.schemas import chat, message
 from app.database import get_db
@@ -24,31 +24,61 @@ def get_chats(
     user_id,
     skip: int = 0,
     db: Session = Depends(get_db),
-    current_user: str = Depends(get_current_user),
+    # current_user: str = Depends(get_current_user),
 ):
-    stmt = (
-        select(models.Chat.chat_id, models.Chat.user_id, models.Bot.bot_id,
-               models.Bot.bot_name, models.Bot.profile_picture)
-        .select_from(models.Chat)
-        .join(models.Bot, models.Bot.bot_id == models.Chat.bot_id1)
-        .join(models.Message, models.Message.chat_id == models.Chat.chat_id, isouter=True)
-        .filter(models.Chat.user_id == user_id)
-        .order_by(models.Message.created_at.desc())
+    LatestMessageSubquery = (
+        db.query(
+            models.Message.chat_id,
+            func.max(models.Message.created_at).label('latest_message_time'),
+            func.max(models.Message.message_id).label('latest_message_id')  # Assuming you have a sequential ID that can indicate the latest
+        )
+        .group_by(models.Message.chat_id)
+        .subquery('latest_message_subquery')
     )
 
-    result = db.execute(stmt).fetchall()
-    # Convert tuples into dictionaries
-    chats = [
+    # Query to fetch the content of the latest message using the latest_message_id
+    MessageContentSubquery = (
+        db.query(
+            models.Message.message_id,
+            models.Message.message.label('latest_message_content')
+        )
+        .subquery('message_content_subquery')
+    )
+
+    # Join Chat, Bot, LatestMessageSubquery, and MessageContentSubquery
+    chats_query = (
+        db.query(
+            models.Chat.chat_id,
+            models.Chat.user_id,
+            models.Chat.bot_id1,
+            models.Bot.bot_name,
+            models.Bot.profile_picture,
+            LatestMessageSubquery.c.latest_message_time,
+            MessageContentSubquery.c.latest_message_content
+        )
+        .join(models.Bot, models.Bot.bot_id == models.Chat.bot_id1)
+        .join(LatestMessageSubquery, LatestMessageSubquery.c.chat_id == models.Chat.chat_id)
+        .join(MessageContentSubquery, MessageContentSubquery.c.message_id == LatestMessageSubquery.c.latest_message_id)
+        .filter(models.Chat.user_id == user_id)
+        .order_by(LatestMessageSubquery.c.latest_message_time.desc())
+    )
+
+    chats = chats_query.all()
+
+    chats_list = [
         {
-            "chat_id": row[0],
-            "user_id": row[1],
-            "bot_id1": row[2],
-            "bot_id1_name": row[3],
-            "bot_id1_profile_picture": row[4],
+            "chat_id": chat.chat_id,
+            "user_id": chat.user_id,
+            "bot_id1": chat.bot_id1,
+            "bot_id1_name": chat.bot_name,
+            "bot_id1_profile_picture": chat.profile_picture,
+            "last_message_content": chat.latest_message_content,
+            "last_message_time": chat.latest_message_time,
         }
-        for row in result
+        for chat in chats
     ]
-    return chats
+
+    return chats_list
 
 
 @router.post("/",
@@ -112,17 +142,33 @@ async def create_message(
     new_message = models.Message(**new_message_data)
 
     db.add(new_message)
-    db.commit()
-    db.refresh(new_message)
 
     bot_id = db_chat.bot_id1
-    bot_description = db.query(models.Bot).filter(models.Bot.bot_id == bot_id).first().description
+    db_bot = db.query(models.Bot).filter(models.Bot.bot_id == bot_id).first()
+    bot_description = db_bot.description
     job_id = get_ml_response(bot_description, new_message.message)
     if job_id:
         ml_response = await check_ml_response(job_id)
-    new_message.message = ml_response
-    new_message.is_bot = True
-    return new_message
+    bot_response = models.Message(
+        chat_id=chat_id,
+        message=ml_response,
+        is_bot=True,
+        created_by_bot=bot_id
+    )
+    db.add(bot_response)
+
+    # Update last message in the chat
+    db_chat.last_message = bot_response.message_id
+    print(db_chat.last_message)
+
+    # Update number of interations with bots
+    db_bot.num_chats += 1
+    db.commit()
+
+    db.refresh(db_chat)
+    db.refresh(db_bot)
+
+    return bot_response
 
 
 @router.get("/{chat_id}/message",
@@ -340,7 +386,7 @@ prefix = "app/api/api_v1/dependency/temp_audio/"
 async def process_audio(
     voice_chat: chat.VoiceChat = Body(...),
     db: Session = Depends(get_db),
-    # current_user: str = Depends(get_current_user)
+    current_user: str = Depends(get_current_user)
     ):
 
     try:
