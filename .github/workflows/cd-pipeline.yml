@@ -11,27 +11,6 @@ jobs:
   build:
     environment:
       name: main
-    env:
-      DATABASE_HOSTNAME: ${{secrets.DATABASE_HOSTNAME}}
-      DATABASE_PORT: ${{secrets.DATABASE_PORT}}
-      DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
-      DATABASE_NAME: ${{secrets.DATABASE_NAME}}
-      DATABASE_USERNAME: ${{secrets.DATABASE_USERNAME}}
-      FB_TYPE: ${{secrets.FB_TYPE}}
-      FB_PROJECT_ID: ${{secrets.FB_PROJECT_ID}}
-      FB_PRIVATE_KEY_ID: ${{secrets.FB_PRIVATE_KEY_ID}}
-      FB_PRIVATE_KEY: ${{secrets.FB_PRIVATE_KEY}}
-      FB_CLIENT_EMAIL: ${{secrets.FB_CLIENT_EMAIL}}
-      FB_CLIENT_ID: ${{secrets.FB_CLIENT_ID}}
-      FB_AUTH_URI: ${{secrets.FB_AUTH_URI}}
-      FB_TOKEN_URI: ${{secrets.FB_TOKEN_URI}}
-      FB_AUTH_PROVIDER_X509_CERT_URL: ${{secrets.FB_AUTH_PROVIDER_X509_CERT_URL}}
-      FB_CLIENT_X509_CERT_URL: ${{secrets.FB_CLIENT_X509_CERT_URL}}
-      FB_UNIVERSE_DOMAIN: ${{secrets.FB_UNIVERSE_DOMAIN}}
-      SPEECH_KEY: ${{secrets.SPEECH_KEY}}
-      SPEECH_REGION: ${{secrets.SPEECH_REGION}}
-      RUNPOD_ENDPOINT: ${{secrets.RUNPOD_ENDPOINT}}
-      RUNPOD_API_KEY: ${{secrets.RUNPOD_API_KEY}}
 
     runs-on: self-hosted
 
@@ -41,11 +20,34 @@ jobs:
       with:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
     - name: Pull Docker image
       run: sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:latest
+
     - name: Delete Old docker container
       run: sudo docker rm -f ttl-backend || true
-    - name: List files in the current directory
-      run: ls -la
+
+    - name: Create .env file
+      run: |
+        echo "DATABASE_HOSTNAME=${{ secrets.DATABASE_HOSTNAME }}" >> .env
+        echo "DATABASE_PORT=${{ secrets.DATABASE_PORT }}" >> .env
+        echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> .env
+        echo "DATABASE_NAME=${{ secrets.DATABASE_NAME }}" >> .env
+        echo "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}" >> .env
+        echo "FB_TYPE=${{ secrets.FB_TYPE }}" >> .env
+        echo "FB_PROJECT_ID=${{ secrets.FB_PROJECT_ID }}" >> .env
+        echo "FB_PRIVATE_KEY_ID=${{ secrets.FB_PRIVATE_KEY_ID }}" >> .env
+        echo "FB_PRIVATE_KEY=${{ secrets.FB_PRIVATE_KEY }}" >> .env
+        echo "FB_CLIENT_EMAIL=${{ secrets.FB_CLIENT_EMAIL }}" >> .env
+        echo "FB_CLIENT_ID=${{ secrets.FB_CLIENT_ID }}" >> .env
+        echo "FB_AUTH_URI=${{ secrets.FB_AUTH_URI }}" >> .env
+        echo "FB_TOKEN_URI=${{ secrets.FB_TOKEN_URI }}" >> .env
+        echo "FB_AUTH_PROVIDER_X509_CERT_URL=${{ secrets.FB_AUTH_PROVIDER_X509_CERT_URL }}" >> .env
+        echo "FB_CLIENT_X509_CERT_URL=${{ secrets.FB_CLIENT_X509_CERT_URL }}" >> .env
+        echo "FB_UNIVERSE_DOMAIN=${{ secrets.FB_UNIVERSE_DOMAIN }}" >> .env
+        echo "SPEECH_KEY=${{ secrets.SPEECH_KEY }}" >> .env
+        echo "SPEECH_REGION=${{ secrets.SPEECH_REGION }}" >> .env
+        echo "RUNPOD_ENDPOINT=${{ secrets.RUNPOD_ENDPOINT }}" >> .env
+        echo "RUNPOD_API_KEY=${{ secrets.RUNPOD_API_KEY }}" >> .env
     - name: Run Docker Container
       run: sudo docker run -d --env-file .env -p 8000:8000 --name ttl-backend ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:latest
