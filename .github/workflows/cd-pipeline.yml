@@ -9,6 +9,8 @@ on:
 jobs:
 
   build:
+    environment:
+      name: main
 
     runs-on: self-hosted
 
