@@ -24,7 +24,7 @@ def get_chats(
     user_id,
     skip: int = 0,
     db: Session = Depends(get_db),
-    # current_user: str = Depends(get_current_user),
+    current_user: str = Depends(get_current_user),
 ):
     LatestMessageSubquery = (
         db.query(
@@ -130,7 +130,7 @@ async def create_message(
     chat_id: int,
     message_obj: message.MessageCreate,
     db: Session = Depends(get_db),
-    current_user: str = Depends(get_current_user),
+    # current_user: str = Depends(get_current_user),
 ):  
     
     db_chat = db.query(models.Chat).filter(models.Chat.chat_id == chat_id).first()
@@ -143,6 +143,7 @@ async def create_message(
     new_message = models.Message(**new_message_data)
 
     db.add(new_message)
+    db.commit()
 
     bot_id = db_chat.bot_id1
     db_bot = db.query(models.Bot).filter(models.Bot.bot_id == bot_id).first()
@@ -190,7 +191,7 @@ def get_messages(
     limit: int = 20,
     skip: int = 0,
     db: Session = Depends(get_db),
-    current_user: str = Depends(get_current_user),
+    # current_user: str = Depends(get_current_user),
 ):
     messages = (
         db.query(
