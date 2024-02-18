@@ -7,26 +7,27 @@ jobs:
     environment:
       name: main
     env:
-      database_hostname=${{secrets.DATABASE_HOSTNAME}}
-      database_port=${{secrets.DATABASE_PORT}}
-      database_password=${{secrets.DATABASE_PASSWORD}}
-      database_name=${{secrets.DATABASE_NAME}}
-      database_username=${{secrets.DATABASE_USERNAME}}
-      fb_type=${{secrets.FB_TYPE}}
-      fb_project_id=${{secrets.FB_PROJECT_ID}}
-      fb_private_key_id=${{secrets.FB_PRIVATE_KEY_ID}}
-      fb_private_key=${{secrets.FB_PRIVATE_KEY}}
-      fb_client_email=${{secrets.FB_CLIENT_EMAIL}}
-      fb_client_id=${{secrets.FB_CLIENT_ID}}
-      fb_auth_uri=${{secrets.FB_AUTH_URI}}
-      fb_token_uri=${{secrets.FB_TOKEN_URI}}
-      fb_auth_provider_x509_cert_url=${{secrets.FB_AUTH_PROVIDER_X509_CERT_URL}}
-      fb_client_x509_cert_url=${{secrets.FB_CLIENT_X509_CERT_URL}}
-      fb_universe_domain=${{secrets.FB_UNIVERSE_DOMAIN}}
-      speech_key=${{secrets.SPEECH_KEY}}
-      speech_region=${{secrets.SPEECH_REGION}}
-      runpod_endpoint=${{secrets.RUNPOD_ENDPOINT}}
-      runpod_api_key=${{secrets.RUNPOD_API_KEY}}
+      DATABASE_HOSTNAME: ${{secrets.DATABASE_HOSTNAME}}
+      DATABASE_PORT: ${{secrets.DATABASE_PORT}}
+      DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
+      DATABASE_NAME: ${{secrets.DATABASE_NAME}}
+      DATABASE_USERNAME: ${{secrets.DATABASE_USERNAME}}
+      FB_TYPE: ${{secrets.FB_TYPE}}
+      FB_PROJECT_ID: ${{secrets.FB_PROJECT_ID}}
+      FB_PRIVATE_KEY_ID: ${{secrets.FB_PRIVATE_KEY_ID}}
+      FB_PRIVATE_KEY: ${{secrets.FB_PRIVATE_KEY}}
+      FB_CLIENT_EMAIL: ${{secrets.FB_CLIENT_EMAIL}}
+      FB_CLIENT_ID: ${{secrets.FB_CLIENT_ID}}
+      FB_AUTH_URI: ${{secrets.FB_AUTH_URI}}
+      FB_TOKEN_URI: ${{secrets.FB_TOKEN_URI}}
+      FB_AUTH_PROVIDER_X509_CERT_URL: ${{secrets.FB_AUTH_PROVIDER_X509_CERT_URL}}
+      FB_CLIENT_X509_CERT_URL: ${{secrets.FB_CLIENT_X509_CERT_URL}}
+      FB_UNIVERSE_DOMAIN: ${{secrets.FB_UNIVERSE_DOMAIN}}
+      SPEECH_KEY: ${{secrets.SPEECH_KEY}}
+      SPEECH_REGION: ${{secrets.SPEECH_REGION}}
+      RUNPOD_ENDPOINT: ${{secrets.RUNPOD_ENDPOINT}}
+      RUNPOD_API_KEY: ${{secrets.RUNPOD_API_KEY}}
+
 
 
     runs-on: ubuntu-latest
