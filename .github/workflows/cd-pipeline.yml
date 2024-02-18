@@ -1,0 +1,21 @@
+name: CD Pipeline
+
+on:
+  workflow_run:
+    workflows: ["Build and Deploy (Continuous Integration)"]
+    types:
+      - completed
+
+jobs:
+
+  build:
+
+    runs-on: self-hosted
+
+    steps:
+    - name: Pull Docker image
+      run: sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:latest
+    - name: Delete Old docker container
+      run: sudo docker rm -f cicd-pipeline-container || true
+    - name: Run Docker Container
+      run: sudo docker run -d --env-file .env -p 8000:8000 --name ttl-backend ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:latest
