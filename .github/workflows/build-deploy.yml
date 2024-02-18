@@ -7,26 +7,27 @@ jobs:
     environment:
       name: main
     env:
-      database_hostname=${{secrets.database_hostname}}
-      database_port=${{secrets.database_port}}
-      database_password=${{secrets.database_password}}
-      database_name=${{secrets.database_name}}
-      database_username=${{secrets.database_username}}
-      fb_type=${{secrets.fb_type}}
-      fb_project_id=${{secrets.fb_project_id}}
-      fb_private_key_id=${{secrets.fb_private_key_id}}
-      fb_private_key=${{secrets.fb_private_key}}
-      fb_client_email=${{secrets.fb_client_email}}
-      fb_client_id=${{secrets.fb_client_id}}
-      fb_auth_uri=${{secrets.fb_auth_uri}}
-      fb_token_uri=${{secrets.fb_token_uri}}
-      fb_auth_provider_x509_cert_url=${{secrets.fb_auth_provider_x509_cert_url}}
-      fb_client_x509_cert_url=${{secrets.fb_client_x509_cert_url}}
-      fb_universe_domain=${{secrets.fb_universe_domain}}
-      speech_key=${{secrets.speech_key}}
-      speech_region=${{secrets.speech_region}}
-      runpod_endpoint=${{secrets.runpod_endpoint}}
-      runpod_api_key=${{secrets.runpod_api_key}}
+      database_hostname=${{secrets.DATABASE_HOSTNAME}}
+      database_port=${{secrets.DATABASE_PORT}}
+      database_password=${{secrets.DATABASE_PASSWORD}}
+      database_name=${{secrets.DATABASE_NAME}}
+      database_username=${{secrets.DATABASE_USERNAME}}
+      fb_type=${{secrets.FB_TYPE}}
+      fb_project_id=${{secrets.FB_PROJECT_ID}}
+      fb_private_key_id=${{secrets.FB_PRIVATE_KEY_ID}}
+      fb_private_key=${{secrets.FB_PRIVATE_KEY}}
+      fb_client_email=${{secrets.FB_CLIENT_EMAIL}}
+      fb_client_id=${{secrets.FB_CLIENT_ID}}
+      fb_auth_uri=${{secrets.FB_AUTH_URI}}
+      fb_token_uri=${{secrets.FB_TOKEN_URI}}
+      fb_auth_provider_x509_cert_url=${{secrets.FB_AUTH_PROVIDER_X509_CERT_URL}}
+      fb_client_x509_cert_url=${{secrets.FB_CLIENT_X509_CERT_URL}}
+      fb_universe_domain=${{secrets.FB_UNIVERSE_DOMAIN}}
+      speech_key=${{secrets.SPEECH_KEY}}
+      speech_region=${{secrets.SPEECH_REGION}}
+      runpod_endpoint=${{secrets.RUNPOD_ENDPOINT}}
+      runpod_api_key=${{secrets.RUNPOD_API_KEY}}
+
 
     runs-on: ubuntu-latest
     steps:
