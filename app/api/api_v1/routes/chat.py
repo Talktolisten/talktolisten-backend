@@ -95,11 +95,21 @@ def create_chat(
     num_bots = 5
     for i in range(2, num_bots+1):
         if new_chat.__getattribute__(f"bot_id{i}") == 0:
-            new_chat.__setattr__(f"bot_id{i}", None)
-
+            new_chat.__setattr__(f"bot_id{i}", None)    
+            
     db.add(new_chat)
     db.commit()
     db.refresh(new_chat)
+
+    new_message = models.Message(
+        chat_id=new_chat.chat_id,
+        message = new_chat.bot_id1.greeting,
+        created_by_bot = new_chat.bot_id1,
+        is_bot = True
+    )
+    db.add(new_message)
+    db.commit()
+
     return new_chat
 
 
@@ -130,7 +140,7 @@ async def create_message(
     chat_id: int,
     message_obj: message.MessageCreate,
     db: Session = Depends(get_db),
-    # current_user: str = Depends(get_current_user),
+    current_user: str = Depends(get_current_user),
 ):  
     
     db_chat = db.query(models.Chat).filter(models.Chat.chat_id == chat_id).first()
@@ -191,7 +201,7 @@ def get_messages(
     limit: int = 20,
     skip: int = 0,
     db: Session = Depends(get_db),
-    # current_user: str = Depends(get_current_user),
+    current_user: str = Depends(get_current_user),
 ):
     messages = (
         db.query(

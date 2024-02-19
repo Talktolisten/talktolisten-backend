@@ -36,6 +36,7 @@ class Bot(Base):
                         nullable=False, server_default=text('now()'))
     voice_id = Column(Integer, ForeignKey(
         "voices.voice_id", ondelete="CASCADE"), nullable=False)
+    greeting = Column(String, nullable=False)
     num_chats = Column(Integer, nullable=False,server_default="0")
     likes = Column(Integer, nullable=False,server_default="0")
     created_by = Column(String, ForeignKey(
