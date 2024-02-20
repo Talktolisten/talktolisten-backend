@@ -35,3 +35,12 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+class Config:
+    # Voice provider
+    VOICE_PROVIDER_1: str = "eleventlabs"
+    VOICE_PROVIDER_2: str = "azure"
+    VOICE_PROVIDER_3: str = "aws"
+    VOICE_PROVIDER_4: str = "gcp"
+
+configs = Config()

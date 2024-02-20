@@ -120,18 +120,25 @@ async def check_ml_response(job_id):
         print(f"An error occurred: {e}")
         return None
     
-def get_audio_response(text, output_audio = None, bot_id = None):
-    audio = generate(
-        text=text,
-        voice=Voice(
-            voice_id='EXAVITQu4vr4xnSDxMaL',
-            settings=VoiceSettings(stability=0.71, similarity_boost=0.5, style=0.0, use_speaker_boost=True)
+class VoiceService(
+    text = str,
+    voice_endpoint = str,
+):
+    def __init__(self, text, voice_endpoint):
+        self.text = text
+        self.voice_endpoint = voice_endpoint
+
+    def get_audio_response_eleventlabs(self, stability = 0.7, similarity_boost = 0.5, style = 0.0, use_speaker_boost = True):
+        voice_id = self.voice_endpoint.split("/")[-1]
+        audio = generate(
+            text=self.text,
+            voice=Voice(
+                voice_id=voice_id,
+                settings=VoiceSettings(stability=stability, similarity_boost=similarity_boost, style=style, use_speaker_boost=use_speaker_boost)
+            )
         )
-    )
-    # with open(output_audio, 'wb') as f:
-    #     f.write(audio)
-    audio_base64 = base64.b64encode(audio).decode('utf-8')
-    return audio_base64
+        audio_base64 = base64.b64encode(audio).decode('utf-8')
+        return audio_base64
 
 # print(get_audio_response("Hello! My name is Bella.", 'output.wav', 1))
 

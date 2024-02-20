@@ -4,10 +4,12 @@ from typing import List, Optional
 import os
 from sqlalchemy import func
 from app import models
+from app.config import configs
 from app.schemas import chat, message
 from app.database import get_db
 from app.auth import get_current_user
-from app.api.api_v1.dependency.utils import convert_m4a_to_wav, save_wav, concatenate_wav_files, azure_speech_to_text, get_ml_response, check_ml_response, get_audio_response, decode_base64
+from app.api.api_v1.dependency.utils import convert_m4a_to_wav, save_wav, concatenate_wav_files, azure_speech_to_text, get_ml_response, check_ml_response, decode_base64
+from app.api.api_v1.dependency.utils import VoiceService
 from app.api.api_v1.dependency.vad import isSpeaking
 
 router = APIRouter(
@@ -96,7 +98,7 @@ def create_chat(
     for i in range(2, num_bots+1):
         if new_chat.__getattribute__(f"bot_id{i}") == 0:
             new_chat.__setattr__(f"bot_id{i}", None)    
-            
+
     db.add(new_chat)
     db.commit()
     db.refresh(new_chat)
@@ -328,6 +330,7 @@ def delete_message(
     db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
+
 AUDIO_CONCAT_NUM = 0
 CONTAIN_AUDIO = False
 prefix = "app/api/api_v1/dependency/temp_audio/"
@@ -346,24 +349,35 @@ prefix = "app/api/api_v1/dependency/temp_audio/"
 #         global CONTAIN_AUDIO
 #         global AUDIO_CONCAT_NUM
 #         need_response = False
+
 #         audio = voice_chat.audio
 #         chat_id = voice_chat.chat_id
 #         bot_id = voice_chat.bot_id
+
+#         voice = (
+#                     db.query(models.Voice)
+#                     .join(models.Bot, models.Bot.voice_id == models.Voice.voice_id)
+#                     .filter(models.Bot.bot_id == bot_id)
+#                     .first()
+#                 )
+
+
 #         temp_file_path = f"{prefix}{chat_id}_temp_audio.m4a"
-#         print(temp_file_path)
+#         print("Create a temporary path for the m4a file at ", temp_file_path)
 #         m4a_file = decode_base64(audio)
 #         with open(temp_file_path, "wb+") as file_object:
 #             file_object.write(m4a_file)
-#         print(f"Audio saved to {temp_file_path}")
+#         print(f"Audio saved to {temp_file_path} after converting from base64")
 #         wav_temp_file_path = f"{prefix}{chat_id}_temp_audio.wav"
-#         # Convert m4a to wav
 #         convert_m4a_to_wav(temp_file_path, wav_temp_file_path)
+#         print('Convert m4a to wav in ', wav_temp_file_path)
 #         os.remove(temp_file_path)
-#         print("wav path in", wav_temp_file_path)
-#         # Process audio using your VAD module
+#         print("Clean up the temporary m4a file")
+        
 #         vad_results = isSpeaking(wav_temp_file_path)
-#         print("here", vad_results)
-#         print(AUDIO_CONCAT_NUM, CONTAIN_AUDIO)
+#         print("VAD result is", vad_results)
+#         print(f"There are {AUDIO_CONCAT_NUM} is concatenated, is the audio contain audio before? {CONTAIN_AUDIO}")
+
 #         if vad_results:
 #             save_wav(wav_temp_file_path, f"{prefix}concat_audios/{chat_id}{AUDIO_CONCAT_NUM}.wav")
 #             AUDIO_CONCAT_NUM += 1
@@ -381,6 +395,7 @@ prefix = "app/api/api_v1/dependency/temp_audio/"
 #             CONTAIN_AUDIO = False
 #             AUDIO_CONCAT_NUM = 0
 #         os.remove(wav_temp_file_path)
+
 #         if need_response:
 #             print(audio_to_translate)
 #             text_translation = azure_speech_to_text(audio_to_translate)
@@ -389,17 +404,18 @@ prefix = "app/api/api_v1/dependency/temp_audio/"
 #             job_id = get_ml_response(bot.description, text_translation)
 #             if job_id:
 #                 ml_response = await check_ml_response(job_id)
-#             # output_audio = f'{prefix}output_audio/{chat_id}.wav'
-#             # get_audio_response(ml_response, output_audio)
-#             return {"is_response": True, "response": ml_response}
-#         # Return the VAD results
+#             if voice.voice_provider == configs.VOICE_PROVIDER_1:
+#                 voice_service = VoiceService(ml_response, voice.voice_endpoint)
+#                 output_audio = voice_service.get_audio_response_eleventlabs()
+#             return {"is_response": True, "response": output_audio, "user_speaking": False}
 
-#         user_start_speaking = True if AUDIO_CONCAT_NUM > 0 else False
-#         return {"is_response": False, "user_start_speaking": user_start_speaking}
+#         user_speaking = True if AUDIO_CONCAT_NUM > 0 else False
+#         return {"is_response": False, "user_speaking": user_speaking}
 
 #     except Exception as e:
-#         # Handle exceptions raised during processing
 #         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+    
+
 @router.post("/process_audio/{chat_id}",
             summary="Process audio",
             description="Process audio",
@@ -414,6 +430,14 @@ async def process_audio(
         audio = voice_chat.audio
         chat_id = voice_chat.chat_id
         bot_id = voice_chat.bot_id
+        
+        voice = (
+            db.query(models.Voice)
+            .join(models.Bot, models.Bot.voice_id == models.Voice.voice_id)
+            .filter(models.Bot.bot_id == bot_id)
+            .first()
+        )
+
         temp_file_path = f"{prefix}{chat_id}_temp_audio.m4a"
         print(temp_file_path)
         m4a_file = decode_base64(audio)
@@ -433,10 +457,13 @@ async def process_audio(
         job_id = get_ml_response(bot.description, text_translation)
         if job_id:
             ml_response = await check_ml_response(job_id)
-        output_audio = get_audio_response(ml_response)
+        
+        if voice.voice_provider == configs.VOICE_PROVIDER_1:
+            voice_service = VoiceService(ml_response, voice.voice_endpoint)
+            output_audio = voice_service.get_audio_response_eleventlabs()
+
         return {"is_response": True, "response": output_audio}
 
 
     except Exception as e:
-        # Handle exceptions raised during processing
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
