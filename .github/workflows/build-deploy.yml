@@ -27,7 +27,7 @@ jobs:
       SPEECH_REGION: ${{secrets.SPEECH_REGION}}
       RUNPOD_ENDPOINT: ${{secrets.RUNPOD_ENDPOINT}}
       RUNPOD_API_KEY: ${{secrets.RUNPOD_API_KEY}}
-
+      ELEVENTLABS_API_KEY: ${{secrets.ELEVENTLABS_API_KEY}}
 
 
     runs-on: ubuntu-latest

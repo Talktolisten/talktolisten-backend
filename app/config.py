@@ -29,6 +29,9 @@ class Settings(BaseSettings):
     # Runpod credentials
     runpod_endpoint: str
     runpod_api_key: str
+
+    # Eleventlabs
+    eleventlabs_api_key: str
     
     class Config:
         env_file = ".env"

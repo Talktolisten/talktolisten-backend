@@ -1,7 +1,7 @@
-from elevenlabs import Voice, VoiceSettings, generate
 from app.config import settings
 import requests
 from pydub import AudioSegment
+import os
 import wave
 import asyncio
 import base64
@@ -120,25 +120,45 @@ async def check_ml_response(job_id):
         print(f"An error occurred: {e}")
         return None
     
-class VoiceService(
-    text = str,
-    voice_endpoint = str,
-):
-    def __init__(self, text, voice_endpoint):
+class VoiceService():
+    def __init__(self, text: str, voice_endpoint: str):
         self.text = text
         self.voice_endpoint = voice_endpoint
 
-    def get_audio_response_eleventlabs(self, stability = 0.7, similarity_boost = 0.5, style = 0.0, use_speaker_boost = True):
+    def get_audio_response_eleventlabs(self, stability = 0.7, similarity_boost = 0.5, style = 0.2, use_speaker_boost = True):
         voice_id = self.voice_endpoint.split("/")[-1]
-        audio = generate(
-            text=self.text,
-            voice=Voice(
-                voice_id=voice_id,
-                settings=VoiceSettings(stability=stability, similarity_boost=similarity_boost, style=style, use_speaker_boost=use_speaker_boost)
-            )
-        )
-        audio_base64 = base64.b64encode(audio).decode('utf-8')
-        return audio_base64
+        url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
 
-# print(get_audio_response("Hello! My name is Bella.", 'output.wav', 1))
+        payload = {
+            "model_id": "eleven_turbo_v2",
+            "text": "Hello greeting seekers",
+            "voice_settings": {
+                "similarity_boost": similarity_boost,
+                "stability": stability,
+                "use_speaker_boost": True,
+                "style": style
+            }
+        }
 
+        headers = {
+            "xi-api-key": settings.eleventlabs_api_key,
+            "Content-Type": "application/json"
+        }
+
+        try:
+            response = requests.request("POST", url, json=payload, headers=headers)
+
+            audio_file_path = 'app/api/api_v1/dependency/temp_audio/output_audio.mp3'
+
+            with open(audio_file_path, 'wb') as audio_file:
+                audio_file.write(response.content)
+            
+            with open(audio_file_path, 'rb') as audio_file:
+                audio = audio_file.read()  
+
+            audio_base64 = base64.b64encode(audio).decode('utf-8')
+
+            os.remove(audio_file_path)
+            return audio_base64
+        except Exception as e:
+            return e
