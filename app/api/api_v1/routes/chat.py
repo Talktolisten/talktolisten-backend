@@ -86,14 +86,15 @@ def get_chats(
 @router.post("/",
              summary="Create a new chat",
              description="Create a new chat",
+             response_model=chat.ChatGet,
              status_code=status.HTTP_201_CREATED)
 def create_chat(
-    chat: chat.ChatCreate,
+    chat_obj: chat.ChatCreate,
     db: Session = Depends(get_db),
     current_user: str = Depends(get_current_user),
 ):  
 
-    new_chat = models.Chat(**chat.dict())
+    new_chat = models.Chat(**chat_obj.dict())
     num_bots = 5
     for i in range(2, num_bots+1):
         if new_chat.__getattribute__(f"bot_id{i}") == 0:
@@ -103,16 +104,26 @@ def create_chat(
     db.commit()
     db.refresh(new_chat)
 
+    bot_db = db.query(models.Bot).filter(models.Bot.bot_id == new_chat.bot_id1).first()
+
     new_message = models.Message(
         chat_id=new_chat.chat_id,
-        message = new_chat.bot_id1.greeting,
+        message = bot_db.greeting,
         created_by_bot = new_chat.bot_id1,
         is_bot = True
     )
     db.add(new_message)
     db.commit()
 
-    return new_chat
+    return chat.ChatGet(
+        chat_id=new_chat.chat_id,
+        user_id=new_chat.user_id,
+        bot_id1=new_chat.bot_id1,
+        bot_id1_name=bot_db.bot_name,
+        bot_id1_profile_picture=bot_db.profile_picture,
+        last_message_content=bot_db.greeting,
+        last_message_time=new_message.created_at,
+    )
 
 
 @router.delete("/{chat_id}",

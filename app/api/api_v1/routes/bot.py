@@ -11,7 +11,7 @@ from app.auth import get_current_user
 
 router = APIRouter(
     prefix="/bot",
-    tags=['bot']
+    tags=['Bot']
 )
 
 @router.get("/{userID}", 
