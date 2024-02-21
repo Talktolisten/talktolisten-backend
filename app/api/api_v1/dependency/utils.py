@@ -131,7 +131,7 @@ class VoiceService():
 
         payload = {
             "model_id": "eleven_turbo_v2",
-            "text": "Hello greeting seekers",
+            "text": self.text,
             "voice_settings": {
                 "similarity_boost": similarity_boost,
                 "stability": stability,
