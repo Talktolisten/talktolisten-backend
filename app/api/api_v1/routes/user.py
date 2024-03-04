@@ -98,3 +98,15 @@ def delete_user(
     db.delete(user)
     db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+@router.get("/check_username/{username}", 
+            summary="Check if a username exists",
+            description="Check if a username exists in the database",
+            response_model=bool)
+def check_username(
+    username: str,
+    db: Session = Depends(get_db), 
+):
+    user = db.query(models.User).filter(models.User.username == username).first()
+
+    return user is not None
