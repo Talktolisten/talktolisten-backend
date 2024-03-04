@@ -11,6 +11,7 @@ class UserCreate(BaseModel):
     first_name: str
     last_name: str
     profile_picture: str
+    bio: Optional[str]
     dob: Optional[str]
 
     class Config:
