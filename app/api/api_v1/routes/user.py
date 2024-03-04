@@ -36,7 +36,7 @@ def create_user(
     return new_user
 
 
-@router.get("/check_user_exists", 
+@router.get("/check_user_exists/{user_id}", 
             summary="Check if a user exists",
             description="Check if a user exists in the database",
             response_model=bool)
