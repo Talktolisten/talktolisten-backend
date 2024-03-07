@@ -32,6 +32,9 @@ class Settings(BaseSettings):
 
     # Eleventlabs
     eleventlabs_api_key: str
+
+    # Text provider
+    together_api_key: str
     
     class Config:
         env_file = ".env"
@@ -45,5 +48,8 @@ class Config:
     VOICE_PROVIDER_2: str = "azure"
     VOICE_PROVIDER_3: str = "aws"
     VOICE_PROVIDER_4: str = "gcp"
+
+    # Text provider
+    TEXT_PROVIDER_1: str = "together"
 
 configs = Config()

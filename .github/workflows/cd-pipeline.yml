@@ -53,5 +53,7 @@ jobs:
         echo "RUNPOD_ENDPOINT=${{ secrets.RUNPOD_ENDPOINT }}" >> .env
         echo "RUNPOD_API_KEY=${{ secrets.RUNPOD_API_KEY }}" >> .env
         echo "ELEVENTLABS_API_KEY=${{ secrets.ELEVENTLABS_API_KEY }}" >> .env
+        echo "TOGETHER_API_KEY=${{ secrets.TOGETHER_API_KEY }}" >> .env
+
     - name: Run Docker Container
       run: sudo docker run -d --env-file .env -p 8000:8000 --name ttl-backend ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:latest

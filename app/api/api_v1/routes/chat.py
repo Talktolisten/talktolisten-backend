@@ -11,6 +11,7 @@ from app.auth import get_current_user
 from app.api.api_v1.dependency.utils import convert_m4a_to_wav, save_wav, concatenate_wav_files, azure_speech_to_text, get_ml_response, check_ml_response, decode_base64
 from app.api.api_v1.dependency.utils import VoiceService
 from app.api.api_v1.dependency.vad import isSpeaking
+from app.api.api_v1.engines.text.base import TextEngine
 
 router = APIRouter(
     prefix="/chat",
@@ -170,10 +171,12 @@ async def create_message(
 
     bot_id = db_chat.bot_id1
     db_bot = db.query(models.Bot).filter(models.Bot.bot_id == bot_id).first()
-    bot_description = db_bot.description
-    job_id = get_ml_response(bot_description, new_message.message)
-    if job_id:
-        ml_response = await check_ml_response(job_id)
+
+    textEngine = TextEngine(new_message.message, db_bot.bot_name, db_bot.description, configs.TEXT_PROVIDER_1)
+    ml_response = textEngine.get_response()
+    # job_id = get_ml_response(bot_description, new_message.message)
+    # if job_id:
+    #     ml_response = await check_ml_response(job_id)
     bot_response = models.Message(
         chat_id=chat_id,
         message=ml_response,
@@ -464,10 +467,14 @@ async def process_audio(
         text_translation = azure_speech_to_text(audio_to_translate)
         os.remove(audio_to_translate)
         bot = db.query(models.Bot).filter(models.Bot.bot_id == bot_id).first()
+
         print(bot.description)
-        job_id = get_ml_response(bot.description, text_translation)
-        if job_id:
-            ml_response = await check_ml_response(job_id)
+        textEngine = TextEngine(text_translation, bot.bot_name, bot.description, configs.TEXT_PROVIDER_1)
+        ml_response = textEngine.get_response()
+        # job_id = get_ml_response(bot.description, text_translation)
+
+        # if job_id:
+        #     ml_response = await check_ml_response(job_id)
         
         if voice.voice_provider == configs.VOICE_PROVIDER_1:
             voice_service = VoiceService(ml_response, voice.voice_endpoint)

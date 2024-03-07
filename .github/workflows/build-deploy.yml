@@ -28,6 +28,7 @@ jobs:
       RUNPOD_ENDPOINT: ${{secrets.RUNPOD_ENDPOINT}}
       RUNPOD_API_KEY: ${{secrets.RUNPOD_API_KEY}}
       ELEVENTLABS_API_KEY: ${{secrets.ELEVENTLABS_API_KEY}}
+      TOGETHER_API_KEY: ${{secrets.TOGETHER_API_KEY}}
 
 
     runs-on: ubuntu-latest
