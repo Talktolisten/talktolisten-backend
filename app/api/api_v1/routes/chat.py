@@ -360,19 +360,18 @@ def delete_message(
 async def process_audio(
     voice_chat: chat.VoiceChat = Body(...),
     db: Session = Depends(get_db),
-    # current_user: str = Depends(get_current_user)
+    current_user: str = Depends(get_current_user)
     ):
 
     try:
         audio = voice_chat.text
-        print(audio)
         chat_id = voice_chat.chat_id
         bot_id = voice_chat.bot_id
 
         new_message = models.Message(
             chat_id=chat_id,
             message = audio,
-            # created_by_user = current_user,
+            created_by_user = current_user,
             is_bot = False
         )
 
@@ -403,7 +402,6 @@ async def process_audio(
         new_message = models.Message(
             chat_id=chat_id,
             message = ml_response,
-            # created_by_user = current_user,
             created_by_bot = bot_id,
             is_bot = True
         )
@@ -411,13 +409,11 @@ async def process_audio(
         db.add(new_message)
         db.commit()
         
-        # if voice.voice_provider == configs.VOICE_PROVIDER_1:
-        #     voice_service = VoiceEngine(ml_response, voice.voice_endpoint)
-        #     output_audio = voice_service.get_audio_response_eleventlabs()
+        if voice.voice_provider == configs.VOICE_PROVIDER_1:
+            voice_service = VoiceEngine(ml_response, voice.voice_endpoint)
+            output_audio = voice_service.get_audio_response_eleventlabs()
 
-        # return {"is_response": True, "response": output_audio}
-        print(ml_response)
-        return ml_response
+        return {"response": output_audio}
 
 
     except Exception as e:
