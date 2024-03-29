@@ -42,3 +42,4 @@ webrtcvad==2.0.10
 librosa==0.10.1
 elevenlabs==0.2.27
 openai==1.13.3
+google-generativeai==0.4.1
