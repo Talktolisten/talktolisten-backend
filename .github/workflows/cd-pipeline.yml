@@ -56,4 +56,4 @@ jobs:
           echo "GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }}" >> .env
 
       - name: Run Docker Container
-        run: sudo docker run -d --env-file .env -p 8000:8000 --name ttl-backend ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:latest
+        run: sudo docker run -d --env-file .env -p 8000:8000 -v /home/ubuntu/uplifted-name-397314-cce42675cc98.json:/app/service-account.json -e GOOGLE_APPLICATION_CREDENTIALS=/app/service-account.json --name ttl-backend ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:latest
