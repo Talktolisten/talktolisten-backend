@@ -8,10 +8,10 @@ from app.config import configs
 from app.schemas import chat, message
 from app.database import get_db
 from app.auth import get_current_user
-from app.api.api_v1.dependency.utils import convert_m4a_to_wav, save_wav, concatenate_wav_files, azure_speech_to_text, get_ml_response, check_ml_response, decode_base64
-from app.api.api_v1.dependency.utils import VoiceService
+from app.api.api_v1.dependency.utils import *
 from app.api.api_v1.dependency.vad import isSpeaking
 from app.api.api_v1.engines.text.base import TextEngine
+from app.api.api_v1.engines.voice.base import VoiceEngine
 
 router = APIRouter(
     prefix="/chat",
@@ -33,13 +33,12 @@ def get_chats(
         db.query(
             models.Message.chat_id,
             func.max(models.Message.created_at).label('latest_message_time'),
-            func.max(models.Message.message_id).label('latest_message_id')  # Assuming you have a sequential ID that can indicate the latest
+            func.max(models.Message.message_id).label('latest_message_id')  
         )
         .group_by(models.Message.chat_id)
         .subquery('latest_message_subquery')
     )
 
-    # Query to fetch the content of the latest message using the latest_message_id
     MessageContentSubquery = (
         db.query(
             models.Message.message_id,
@@ -48,7 +47,6 @@ def get_chats(
         .subquery('message_content_subquery')
     )
 
-    # Join Chat, Bot, LatestMessageSubquery, and MessageContentSubquery
     chats_query = (
         db.query(
             models.Chat.chat_id,
@@ -172,7 +170,17 @@ async def create_message(
     bot_id = db_chat.bot_id1
     db_bot = db.query(models.Bot).filter(models.Bot.bot_id == bot_id).first()
 
-    textEngine = TextEngine(new_message.message, db_bot.bot_name, db_bot.description, configs.TEXT_PROVIDER_1)
+    last_chats = (
+        db.query(models.Message)
+        .filter(models.Message.chat_id == chat_id)
+        .order_by(models.Message.created_at.desc())
+        .limit(6)
+        .all()
+    )
+
+    message_lists = make_message_lists(last_chats)
+
+    textEngine = TextEngine(message_lists, db_bot.bot_name, db_bot.description, configs.TEXT_PROVIDER_2)
     ml_response = textEngine.get_response()
     # job_id = get_ml_response(bot_description, new_message.message)
     # if job_id:
@@ -345,91 +353,6 @@ def delete_message(
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
-AUDIO_CONCAT_NUM = 0
-CONTAIN_AUDIO = False
-prefix = "app/api/api_v1/dependency/temp_audio/"
-
-# @router.post("/process_audio/{chat_id}",
-#             summary="Process audio",
-#             description="Process audio",
-#             status_code=status.HTTP_200_OK)
-# async def process_audio(
-#     voice_chat: chat.VoiceChat = Body(...),
-#     db: Session = Depends(get_db),
-#     # current_user: str = Depends(get_current_user)
-#     ):
-
-#     try:
-#         global CONTAIN_AUDIO
-#         global AUDIO_CONCAT_NUM
-#         need_response = False
-
-#         audio = voice_chat.audio
-#         chat_id = voice_chat.chat_id
-#         bot_id = voice_chat.bot_id
-
-#         voice = (
-#                     db.query(models.Voice)
-#                     .join(models.Bot, models.Bot.voice_id == models.Voice.voice_id)
-#                     .filter(models.Bot.bot_id == bot_id)
-#                     .first()
-#                 )
-
-
-#         temp_file_path = f"{prefix}{chat_id}_temp_audio.m4a"
-#         print("Create a temporary path for the m4a file at ", temp_file_path)
-#         m4a_file = decode_base64(audio)
-#         with open(temp_file_path, "wb+") as file_object:
-#             file_object.write(m4a_file)
-#         print(f"Audio saved to {temp_file_path} after converting from base64")
-#         wav_temp_file_path = f"{prefix}{chat_id}_temp_audio.wav"
-#         convert_m4a_to_wav(temp_file_path, wav_temp_file_path)
-#         print('Convert m4a to wav in ', wav_temp_file_path)
-#         os.remove(temp_file_path)
-#         print("Clean up the temporary m4a file")
-        
-#         vad_results = isSpeaking(wav_temp_file_path)
-#         print("VAD result is", vad_results)
-#         print(f"There are {AUDIO_CONCAT_NUM} is concatenated, is the audio contain audio before? {CONTAIN_AUDIO}")
-
-#         if vad_results:
-#             save_wav(wav_temp_file_path, f"{prefix}concat_audios/{chat_id}{AUDIO_CONCAT_NUM}.wav")
-#             AUDIO_CONCAT_NUM += 1
-#             CONTAIN_AUDIO = True
-#         else:
-#             if CONTAIN_AUDIO:
-#                 concatlist = []
-#                 for i in range(AUDIO_CONCAT_NUM):
-#                     concatlist.append(f"{prefix}concat_audios/{chat_id}{i}.wav")
-#                 audio_to_translate = concatenate_wav_files(concatlist, chat_id)
-#                 for i in range(AUDIO_CONCAT_NUM):
-#                     os.remove(f"{prefix}concat_audios/{chat_id}{i}.wav")
-#                 need_response = True
-                
-#             CONTAIN_AUDIO = False
-#             AUDIO_CONCAT_NUM = 0
-#         os.remove(wav_temp_file_path)
-
-#         if need_response:
-#             print(audio_to_translate)
-#             text_translation = azure_speech_to_text(audio_to_translate)
-#             os.remove(audio_to_translate)
-#             bot = db.query(models.Bot).filter(models.Bot.bot_id == bot_id).first()
-#             job_id = get_ml_response(bot.description, text_translation)
-#             if job_id:
-#                 ml_response = await check_ml_response(job_id)
-#             if voice.voice_provider == configs.VOICE_PROVIDER_1:
-#                 voice_service = VoiceService(ml_response, voice.voice_endpoint)
-#                 output_audio = voice_service.get_audio_response_eleventlabs()
-#             return {"is_response": True, "response": output_audio, "user_speaking": False}
-
-#         user_speaking = True if AUDIO_CONCAT_NUM > 0 else False
-#         return {"is_response": False, "user_speaking": user_speaking}
-
-#     except Exception as e:
-#         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
-    
-
 @router.post("/process_audio/{chat_id}",
             summary="Process audio",
             description="Process audio",
@@ -437,13 +360,24 @@ prefix = "app/api/api_v1/dependency/temp_audio/"
 async def process_audio(
     voice_chat: chat.VoiceChat = Body(...),
     db: Session = Depends(get_db),
-    current_user: str = Depends(get_current_user)
+    # current_user: str = Depends(get_current_user)
     ):
 
     try:
-        audio = voice_chat.audio
+        audio = voice_chat.text
+        print(audio)
         chat_id = voice_chat.chat_id
         bot_id = voice_chat.bot_id
+
+        new_message = models.Message(
+            chat_id=chat_id,
+            message = audio,
+            # created_by_user = current_user,
+            is_bot = False
+        )
+
+        db.add(new_message)
+        db.commit()
         
         voice = (
             db.query(models.Voice)
@@ -452,35 +386,38 @@ async def process_audio(
             .first()
         )
 
-        temp_file_path = f"{prefix}{chat_id}_temp_audio.m4a"
-        print(temp_file_path)
-        m4a_file = decode_base64(audio)
-        with open(temp_file_path, "wb+") as file_object:
-            file_object.write(m4a_file)
-        print(f"Audio saved to {temp_file_path}")
-        wav_temp_file_path = f"{prefix}{chat_id}_temp_audio.wav"
-        # Convert m4a to wav
-        convert_m4a_to_wav(temp_file_path, wav_temp_file_path)
-        os.remove(temp_file_path)
-        print("wav path in", wav_temp_file_path)
-        audio_to_translate = wav_temp_file_path
-        text_translation = azure_speech_to_text(audio_to_translate)
-        os.remove(audio_to_translate)
+        last_chats = (
+            db.query(models.Message)
+            .filter(models.Message.chat_id == chat_id)
+            .order_by(models.Message.created_at.desc())
+            .limit(6)
+            .all()
+        )
+
+        message_lists = make_message_lists(last_chats)
         bot = db.query(models.Bot).filter(models.Bot.bot_id == bot_id).first()
-
-        print(bot.description)
-        textEngine = TextEngine(text_translation, bot.bot_name, bot.description, configs.TEXT_PROVIDER_1)
-        ml_response = textEngine.get_response()
-        # job_id = get_ml_response(bot.description, text_translation)
-
-        # if job_id:
-        #     ml_response = await check_ml_response(job_id)
         
-        if voice.voice_provider == configs.VOICE_PROVIDER_1:
-            voice_service = VoiceService(ml_response, voice.voice_endpoint)
-            output_audio = voice_service.get_audio_response_eleventlabs()
+        textEngine = TextEngine(message_lists, bot.bot_name, bot.description, configs.TEXT_PROVIDER_2)
+        ml_response = textEngine.get_response()
 
-        return {"is_response": True, "response": output_audio}
+        new_message = models.Message(
+            chat_id=chat_id,
+            message = ml_response,
+            # created_by_user = current_user,
+            created_by_bot = bot_id,
+            is_bot = True
+        )
+
+        db.add(new_message)
+        db.commit()
+        
+        # if voice.voice_provider == configs.VOICE_PROVIDER_1:
+        #     voice_service = VoiceEngine(ml_response, voice.voice_endpoint)
+        #     output_audio = voice_service.get_audio_response_eleventlabs()
+
+        # return {"is_response": True, "response": output_audio}
+        print(ml_response)
+        return ml_response
 
 
     except Exception as e:

@@ -35,6 +35,7 @@ class Settings(BaseSettings):
 
     # Text provider
     together_api_key: str
+    google_api_key: str
     
     class Config:
         env_file = ".env"
@@ -51,5 +52,6 @@ class Config:
 
     # Text provider
     TEXT_PROVIDER_1: str = "together"
+    TEXT_PROVIDER_2: str = "google"
 
 configs = Config()
