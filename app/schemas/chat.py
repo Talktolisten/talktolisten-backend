@@ -34,7 +34,7 @@ class ChatCreate(BaseModel):
 class VoiceChat(BaseModel):
     chat_id: int
     bot_id: int
-    audio: str
+    text: str
 
     class Config:
         from_attributes = True

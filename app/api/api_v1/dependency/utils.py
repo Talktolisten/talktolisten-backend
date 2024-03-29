@@ -1,10 +1,12 @@
 from app.config import settings
+from typing import List
 import requests
 from pydub import AudioSegment
 import os
 import wave
 import asyncio
 import base64
+from app.models import Message
 
 def decode_base64(base64_string):
     return base64.b64decode(base64_string)
@@ -43,8 +45,6 @@ def concatenate_wav_files(input_file_paths, chat_id):
                 output_wav.writeframes(input_wav.readframes(input_wav.getnframes()))
 
     return output_filename
-
-# concatenate_wav_files(['whatstheweatherlike0.wav', 'whatstheweatherlike1.wav', 'whatstheweatherlike2.wav'], 23)
 
 def azure_speech_to_text(audio_path):
     try:
@@ -120,45 +120,12 @@ async def check_ml_response(job_id):
         print(f"An error occurred: {e}")
         return None
     
-class VoiceService():
-    def __init__(self, text: str, voice_endpoint: str):
-        self.text = text
-        self.voice_endpoint = voice_endpoint
-
-    def get_audio_response_eleventlabs(self, stability = 0.7, similarity_boost = 0.5, style = 0.2, use_speaker_boost = True):
-        voice_id = self.voice_endpoint.split("/")[-1]
-        url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
-
-        payload = {
-            "model_id": "eleven_turbo_v2",
-            "text": self.text,
-            "voice_settings": {
-                "similarity_boost": similarity_boost,
-                "stability": stability,
-                "use_speaker_boost": True,
-                "style": style
-            }
-        }
-
-        headers = {
-            "xi-api-key": settings.eleventlabs_api_key,
-            "Content-Type": "application/json"
-        }
-
-        try:
-            response = requests.request("POST", url, json=payload, headers=headers)
-
-            audio_file_path = 'app/api/api_v1/dependency/temp_audio/output_audio.mp3'
-
-            with open(audio_file_path, 'wb') as audio_file:
-                audio_file.write(response.content)
-            
-            with open(audio_file_path, 'rb') as audio_file:
-                audio = audio_file.read()  
-
-            audio_base64 = base64.b64encode(audio).decode('utf-8')
-
-            os.remove(audio_file_path)
-            return audio_base64
-        except Exception as e:
-            return e
+def make_message_lists(message_list: List[Message]) -> list:
+    print(message_list[0].is_bot)
+    messages = []
+    for message in message_list:
+        if message.is_bot:
+            messages.append("Character: " + message.message)
+        else:
+            messages.append("User: " + message.message)
+    return messages
