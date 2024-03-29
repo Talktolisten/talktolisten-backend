@@ -121,7 +121,6 @@ async def check_ml_response(job_id):
         return None
     
 def make_message_lists(message_list: List[Message]) -> list:
-    print(message_list[0].is_bot)
     messages = []
     for message in message_list:
         if message.is_bot:
