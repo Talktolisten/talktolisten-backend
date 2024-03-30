@@ -413,7 +413,7 @@ async def process_audio(
             voice_service = VoiceEngine(ml_response, voice.voice_endpoint)
             output_audio = voice_service.get_audio_response_eleventlabs()
 
-        return {"response": output_audio}
+        return output_audio
 
 
     except Exception as e:
