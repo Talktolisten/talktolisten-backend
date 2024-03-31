@@ -10,7 +10,7 @@ class TextEngine:
                 ):
         self.api_key_token = ""
 
-        self.system_prompt = "Embody the specified character, complete with their background, core traits, relationships, and goals. Use a distinct speaking style reflective of their unique personality and environment. Responses should be brief and concise, focusing solely on providing character-driven insights. Avoid lengthy introductions or explanations. Remember, you are in an ongoing conversation, so your responses should be contextually aware and maintain the flow of the dialogue."
+        self.system_prompt = "Embody the specified character, complete with their background, core traits, relationships, and goals. Use a distinct speaking style reflective of their unique personality and environment. Responses should be very short and natural, as if you were having actual and realistic conversation. Avoid lengthy introductions or explanations. Remember, you are in an ongoing conversation, so your responses should be contextually aware and maintain the flow of the dialogue."
         message_list.reverse()
 
         joined_messages = "\n".join(message_list)

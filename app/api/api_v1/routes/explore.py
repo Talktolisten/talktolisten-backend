@@ -42,6 +42,7 @@ def search_bots(
     bots = db.query(models.Bot).filter(models.Bot.bot_name.contains(search)).offset(skip).limit(limit).all()
     return bots
 
+
 @router.get("/category", 
             summary="Get bots by category",
             description="Get bots by category in the database",
@@ -50,18 +51,30 @@ def get_bots_by_category(
     category: str,
     limit: int = 20, 
     skip: int = 0, 
-    current_user: dict= Depends(get_current_user),
     db: Session = Depends(get_db), 
+    current_user: dict= Depends(get_current_user),
 ):
-    bots = db.query(models.Bot).filter(models.Bot.category == category).offset(skip).limit(limit).all()
+    bots = db.query(models.Bot).filter(models.Bot.category == category).order_by(func.random()).offset(skip).limit(limit).all()
+    return bots
+
+
+@router.get("/random", 
+            summary="Get a bot randomly",
+            description="Get a bot randomly in the database",
+            response_model=explore.ExploreBots)
+def get_bots_random(
+    db: Session = Depends(get_db), 
+    current_user: dict= Depends(get_current_user),
+):
+    bots = db.query(models.Bot).order_by(func.random()).limit(1).first()
     return bots
 
 
 @router.get("/{id}", response_model=explore.ExploreBots)
 def get_bot_by_id(
     id: int,
-    current_user: dict= Depends(get_current_user),
     db: Session = Depends(get_db), 
+    current_user: dict= Depends(get_current_user),
 ):
     bot = db.query(models.Bot).filter(models.Bot.bot_id == id).first()
 
