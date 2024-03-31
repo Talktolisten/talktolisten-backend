@@ -17,7 +17,7 @@ class TextEngine:
         self.prompt = f"""{self.system_prompt}\nCharacter name: {character_name}\nCharacter Definition: {character_description}\n\n\n{joined_messages}\nCharacter:"""
 
         self.temperature = 1
-        self.max_tokens = 512
+        self.max_tokens = 128
 
         if provider == "together":
             self.api_key_token = settings.together_api_key
