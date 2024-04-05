@@ -25,7 +25,14 @@ class BotCreate(BaseModel):
     profile_picture: Optional[str]
     category: Optional[str]
     voice_id: int
-    created_by: str # must add authentication for create by who
+    created_by: str
+
+    class Config:
+        from_attributes = True
+
+class BotGenerate(BaseModel):
+    bot_name: str
+    description: str
 
     class Config:
         from_attributes = True

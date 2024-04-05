@@ -7,7 +7,7 @@ from app import models
 from app.schemas import bot
 from app.database import get_db
 from app.auth import get_current_user
-
+from app.api.api_v1.engines.text.utils import UTILS, UtilsEngine
 
 router = APIRouter(
     prefix="/bot",
@@ -40,6 +40,49 @@ def create_bot(
     db.commit()
     db.refresh(db_bot)
     return db_bot
+
+
+@router.post("/create_bot/generate", 
+            summary="Generate greeting and short description",
+            description="Generate greeting and short description when creating a new bot",
+            status_code=status.HTTP_200_OK
+            )
+def generate_bot(
+    bot_create: bot.BotGenerate,
+    current_user: str = Depends(get_current_user)
+):
+    engine = UtilsEngine(
+        character_name=bot_create.bot_name,
+        character_description=bot_create.description,
+        util=UTILS[0]
+    )
+
+    greeting, description = engine.process_response_util_0(engine.get_response())
+
+    return {
+        "greeting": greeting,
+        "short_description": description
+    }
+
+
+@router.post("/create_bot/optimize_description", 
+            summary="Optimize bot description from existing description",
+            description="Optimize bot description from existing description when creating a new bot",
+            status_code=status.HTTP_200_OK
+            )
+def optimize_bot(
+    bot_optimize: bot.BotGenerate,
+    current_user: str = Depends(get_current_user)
+):
+    engine = UtilsEngine(
+        character_name=bot_optimize.bot_name,
+        character_description=bot_optimize.description,
+        util=UTILS[1]
+    )
+
+    optimized_description = engine.get_response()
+
+    return optimized_description
 
 
 @router.patch("/{id}", 

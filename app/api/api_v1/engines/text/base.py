@@ -7,6 +7,8 @@ class TextEngine:
                 character_name: str,
                 character_description: str,
                 provider: str,
+                temperature: float = 1,
+                max_tokens: int = 128
                 ):
         self.api_key_token = ""
 
@@ -16,8 +18,8 @@ class TextEngine:
         joined_messages = "\n".join(message_list)
         self.prompt = f"""{self.system_prompt}\nCharacter name: {character_name}\nCharacter Definition: {character_description}\n\n\n{joined_messages}\nCharacter:"""
 
-        self.temperature = 1
-        self.max_tokens = 128
+        self.temperature = temperature
+        self.max_tokens = max_tokens
 
         if provider == "together":
             self.api_key_token = settings.together_api_key
