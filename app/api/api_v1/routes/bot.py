@@ -85,6 +85,45 @@ def optimize_bot(
     return optimized_description
 
 
+@router.post("/create_bot/generate_img_prompt", 
+            summary="Generate image promptfor character",
+            description="Generate image prompt for character when creating a new bot",
+            status_code=status.HTTP_200_OK
+            )
+def generate_img_prompt(
+    bot_optimize: bot.BotGenerate,
+    current_user: str = Depends(get_current_user)
+):
+    engine = UtilsEngine(
+        character_name=bot_optimize.bot_name,
+        character_description=bot_optimize.description,
+        util=UTILS[2]
+    )
+
+    image_prompt = engine.get_response()
+
+    return image_prompt
+
+
+@router.post("/create_bot/optimize_img_prompt", 
+            summary="Optimize image prompt for character",
+            description="Optimize image prompt for character when creating a new bot",
+            status_code=status.HTTP_200_OK
+            )
+def optimize_img_prompt(
+    image_prompt: str,
+    current_user: str = Depends(get_current_user)
+):
+    engine = UtilsEngine(
+        image_prompt=image_prompt,
+        util=UTILS[3]
+    )
+
+    optimized_prompt = engine.get_response()
+
+    return optimized_prompt
+
+
 @router.patch("/{id}", 
             summary="Update bot information",
             description="Update bot information by bot id",
