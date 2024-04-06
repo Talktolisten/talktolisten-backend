@@ -39,7 +39,9 @@ def search_bots(
     current_user: dict= Depends(get_current_user),
     db: Session = Depends(get_db), 
 ):
-    bots = db.query(models.Bot).filter(models.Bot.bot_name.contains(search)).offset(skip).limit(limit).all()
+    bots = db.query(models.Bot).filter(models.Bot.bot_name.contains(search),
+                                    models.Bot.privacy == "public"
+                                    ).offset(skip).limit(limit).all()
     return bots
 
 
@@ -54,7 +56,9 @@ def get_bots_by_category(
     db: Session = Depends(get_db), 
     current_user: dict= Depends(get_current_user),
 ):
-    bots = db.query(models.Bot).filter(models.Bot.category == category).order_by(func.random()).offset(skip).limit(limit).all()
+    bots = db.query(models.Bot).filter(models.Bot.category == category,
+                                    models.Bot.privacy == "public",
+                                    ).order_by(func.random()).offset(skip).limit(limit).all()
     return bots
 
 
@@ -66,7 +70,7 @@ def get_bots_random(
     db: Session = Depends(get_db), 
     current_user: dict= Depends(get_current_user),
 ):
-    bots = db.query(models.Bot).order_by(func.random()).limit(1).first()
+    bots = db.query(models.Bot).filter(models.Bot.privacy == "public").order_by(func.random()).limit(1).first()
     return bots
 
 
