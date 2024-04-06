@@ -41,6 +41,8 @@ class Bot(Base):
     likes = Column(Integer, nullable=False,server_default="0")
     created_by = Column(String, ForeignKey(
         "users.user_id", ondelete="CASCADE"), nullable=False)
+    privacy = Column(String, nullable=False, server_default='public')
+    gender = Column(String, nullable=True, server_default='non-binary')
 
 class Voice(Base):
     __tablename__ = "voices"
