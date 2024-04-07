@@ -22,9 +22,12 @@ class BotCreate(BaseModel):
     bot_name: str
     short_description: Optional[str]
     description: str
+    greeting: str
     profile_picture: Optional[str]
     category: Optional[str]
     voice_id: int
+    privacy: str
+    gender: Optional[str]
     created_by: str
 
     class Config:
