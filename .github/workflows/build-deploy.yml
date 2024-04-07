@@ -31,6 +31,7 @@ jobs:
       TOGETHER_API_KEY: ${{secrets.TOGETHER_API_KEY}}
       GOOGLE_API_KEY: ${{secrets.GOOGLE_API_KEY}}
       AZURE_API_KEY: ${{secrets.AZURE_API_KEY}}
+      AZURE_ENDPOINT: ${{secrets.AZURE_ENDPOINT}}
 
     runs-on: ubuntu-latest
     steps:

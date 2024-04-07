@@ -17,7 +17,7 @@ class ImageEngine:
     def AzureEngine(self):
         client = AzureOpenAI(
             api_version="2024-02-01",
-            azure_endpoint="https://ttl-image-gen.openai.azure.com/",
+            azure_endpoint=settings.azure_endpoint,
             api_key=self.api_key_token,
         )
 

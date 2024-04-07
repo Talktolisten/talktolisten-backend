@@ -26,6 +26,7 @@ class Settings(BaseSettings):
     speech_key: str
     speech_region: str
     azure_api_key: str
+    azure_endpoint: str
 
     # Runpod credentials
     runpod_endpoint: str
