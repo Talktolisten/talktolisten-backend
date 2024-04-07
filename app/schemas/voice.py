@@ -8,6 +8,7 @@ class VoiceGet(BaseModel):
     voice_id: int
     voice_name: str
     voice_description: Optional[str]
+    sample_url: str
 
     class Config:
         from_attributes = True
