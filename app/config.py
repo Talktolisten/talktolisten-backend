@@ -25,6 +25,7 @@ class Settings(BaseSettings):
     # Azure credentials
     speech_key: str
     speech_region: str
+    azure_api_key: str
 
     # Runpod credentials
     runpod_endpoint: str
@@ -53,5 +54,11 @@ class Config:
     # Text provider
     TEXT_PROVIDER_1: str = "together"
     TEXT_PROVIDER_2: str = "google"
+
+    # Image provider
+    IMAGE_PROVIDER_1: str = "azure"
+    IMAGE_PROVIDER_2: str = "openai"
+    IMAGE_PROVIDER_3: str = "google"
+    IMAGE_PROVIDER_4: str = "deepai"
 
 configs = Config()

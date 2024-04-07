@@ -54,6 +54,7 @@ jobs:
           echo "ELEVENTLABS_API_KEY=${{ secrets.ELEVENTLABS_API_KEY }}" >> .env
           echo "TOGETHER_API_KEY=${{ secrets.TOGETHER_API_KEY }}" >> .env
           echo "GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }}" >> .env
+          echo "AZURE_API_KEY=${{ secrets.AZURE_API_KEY }}" >> .env
 
       - name: Run Docker Container
         run: sudo docker run -d --env-file .env -p 8000:8000 -v /home/ubuntu/uplifted-name-397314-cce42675cc98.json:/app/service-account.json -e GOOGLE_APPLICATION_CREDENTIALS=/app/service-account.json --name ttl-backend ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:latest

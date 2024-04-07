@@ -7,7 +7,9 @@ from app import models
 from app.schemas import bot
 from app.database import get_db
 from app.auth import get_current_user
+from app.config import configs
 from app.api.api_v1.engines.text.utils import UTILS, UtilsEngine
+from app.api.api_v1.engines.image.base import ImageEngine
 
 router = APIRouter(
     prefix="/bot",
@@ -122,6 +124,25 @@ def optimize_img_prompt(
     optimized_prompt = engine.get_response()
 
     return optimized_prompt
+
+
+@router.post("/create_bot/generate_image", 
+            summary="Generate image from a prompt for character",
+            description="Generate image from a prompt for character when creating a new bot",
+            status_code=status.HTTP_200_OK
+            )
+def optimize_img_prompt(
+    image_prompt: str,
+    current_user: str = Depends(get_current_user)
+):
+    engine = ImageEngine(
+        image_prompt=image_prompt,
+        provider=configs.IMAGE_PROVIDER_1
+    )
+
+    image_url = engine.get_image_response()
+
+    return image_url
 
 
 @router.patch("/{id}", 
