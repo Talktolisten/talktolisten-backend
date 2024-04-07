@@ -4,7 +4,7 @@ from typing import List, Optional
 
 from sqlalchemy import func
 from app import models
-from app.schemas import user
+from app.schemas import user, bot
 from app.database import get_db
 import app.utils as utils
 from app.auth import get_current_user
@@ -123,3 +123,15 @@ def check_username(
     user = db.query(models.User).filter(models.User.username == username).first()
 
     return user is not None
+
+
+@router.get("/created_bots", 
+            summary="Get all bots created by users",
+            description="Get all bots created by users by user_id",
+            response_model=bot.BotGet)
+def get_created_bots(
+    db: Session = Depends(get_db), 
+    user_id: Optional[str] = Depends(get_current_user)
+):  
+    bots = db.query(models.Bot).filter(models.Bot.created_by == user_id).all()
+    return bots

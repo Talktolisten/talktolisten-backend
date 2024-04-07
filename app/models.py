@@ -1,9 +1,13 @@
 from sqlalchemy.schema import Column
-from sqlalchemy import Integer, String, Boolean, ForeignKey, text
+from sqlalchemy import Integer, String, Boolean, ForeignKey, text, Table
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.sqltypes import TIMESTAMP, Date
 from .database import Base
 
+user_likes_bots = Table('user_likes_bots', Base.metadata,
+    Column('user_id', String, ForeignKey('users.user_id'), primary_key=True),
+    Column('bot_id', Integer, ForeignKey('bots.bot_id'), primary_key=True)
+)
 
 class User(Base):
     __tablename__ = "users"
@@ -21,6 +25,7 @@ class User(Base):
     profile_picture = Column(String, nullable=False)
     status = Column(String, nullable=False,server_default="inactive")
     theme = Column(String, nullable=False,server_default="light")
+    liked_bots = relationship('Bot', secondary=user_likes_bots, back_populates='liked_by_users')
 
 
 class Bot(Base):
@@ -43,6 +48,7 @@ class Bot(Base):
         "users.user_id", ondelete="CASCADE"), nullable=False)
     privacy = Column(String, nullable=False, server_default='public')
     gender = Column(String, nullable=True, server_default='non-binary')
+    liked_by_users = relationship('User', secondary=user_likes_bots, back_populates='liked_bots')
 
 class Voice(Base):
     __tablename__ = "voices"

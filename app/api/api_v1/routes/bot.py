@@ -149,6 +149,40 @@ def update_bot(
     return db_bot
 
 
+@router.post("/like/{bot_id}", 
+            summary="User likes a bot",
+            description="User likes a bot by bot id",
+            status_code=status.HTTP_200_OK)
+def likes_bot(
+    bot_id: int,
+    db: Session = Depends(get_db), 
+    current_user: str = Depends(get_current_user)
+):
+    
+    bot_to_like = db.query(models.Bot).filter(models.Bot.bot_id == bot_id).first()
+    
+    if not bot_to_like:
+        raise HTTPException(status_code=404, detail="Bot not found")
+
+    existing_like = db.query(models.user_likes_bots).filter_by(
+        user_id=current_user,
+        bot_id=bot_id
+    ).first()
+
+    if existing_like:
+        return Response(status_code=status.HTTP_200_OK)
+
+    db.execute(
+        models.user_likes_bots.insert().values(
+            user_id=current_user,
+            bot_id=bot_id
+        )
+    )
+    db.commit()
+
+    return Response(status_code=status.HTTP_200_OK)
+
+
 @router.delete("/{id}", 
             summary="Delete bot by id",
             description="Delete bot by bot id",
