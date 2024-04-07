@@ -62,6 +62,7 @@ class Voice(Base):
                         nullable=False, server_default=text('now()'))
     created_by = Column(String, ForeignKey(
         "users.user_id", ondelete="CASCADE"), nullable=False)
+    sample_url = Column(String, nullable=False)
 
 class Message(Base):
     __tablename__ = "messages"
