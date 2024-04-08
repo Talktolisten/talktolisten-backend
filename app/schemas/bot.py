@@ -49,3 +49,9 @@ class BotUpdate(BaseModel):
 
     class Config:
         from_attributes = True
+
+class ImagePrompt(BaseModel):
+    image_prompt: str
+
+    class Config:
+        from_attributes = True

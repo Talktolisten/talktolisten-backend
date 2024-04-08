@@ -115,7 +115,7 @@ def generate_img_prompt(
             status_code=status.HTTP_200_OK
             )
 def optimize_img_prompt(
-    image_prompt: str,
+    image_prompt: bot.ImagePrompt,
     current_user: str = Depends(get_current_user)
 ):
     engine = UtilsEngine(
@@ -134,7 +134,7 @@ def optimize_img_prompt(
             status_code=status.HTTP_200_OK
             )
 def generate_avatar(
-    image_prompt: str,
+    image_prompt: bot.ImagePrompt,
     current_user: str = Depends(get_current_user)
 ):
     # engine = ImageEngine(
