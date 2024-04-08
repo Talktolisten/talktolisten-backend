@@ -133,7 +133,7 @@ def optimize_img_prompt(
             description="Generate image from a prompt for character when creating a new bot",
             status_code=status.HTTP_200_OK
             )
-def optimize_img_prompt(
+def generate_avatar(
     image_prompt: str,
     current_user: str = Depends(get_current_user)
 ):
