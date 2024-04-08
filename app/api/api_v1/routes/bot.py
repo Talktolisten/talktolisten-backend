@@ -11,6 +11,8 @@ from app.config import configs
 from app.api.api_v1.engines.text.utils import UTILS, UtilsEngine
 from app.api.api_v1.engines.image.base import ImageEngine
 
+import time
+
 router = APIRouter(
     prefix="/bot",
     tags=['Bot']
@@ -135,12 +137,15 @@ def optimize_img_prompt(
     image_prompt: str,
     current_user: str = Depends(get_current_user)
 ):
-    engine = ImageEngine(
-        image_prompt=image_prompt,
-        provider=configs.IMAGE_PROVIDER_1
-    )
+    # engine = ImageEngine(
+    #     image_prompt=image_prompt,
+    #     provider=configs.IMAGE_PROVIDER_1
+    # )
 
-    image_url = engine.get_image_response()
+    # image_url = engine.get_image_response()
+
+    time.sleep(10)
+    image_url = "https://dalleproduse.blob.core.windows.net/private/images/2ea03e7b-53b7-4b9c-8c17-bee8159b3494/generated_00.png?se=2024-04-08T03%3A46%3A00Z&sig=bUiI8xx3w1YWI1pBV%2FEm7%2BQasVB%2B5vGfCh1A3qalmUA%3D&ske=2024-04-14T03%3A44%3A13Z&skoid=09ba021e-c417-441c-b203-c81e5dcd7b7f&sks=b&skt=2024-04-07T03%3A44%3A13Z&sktid=33e01921-4d64-4f8c-a055-5bdaffd5e33d&skv=2020-10-02&sp=r&spr=https&sr=b&sv=2020-10-02"
 
     return image_url
 
