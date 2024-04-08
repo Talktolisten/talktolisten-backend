@@ -145,7 +145,7 @@ def generate_avatar(
     # image_url = engine.get_image_response()
 
     time.sleep(10)
-    image_url = "https://dalleproduse.blob.core.windows.net/private/images/2ea03e7b-53b7-4b9c-8c17-bee8159b3494/generated_00.png?se=2024-04-08T03%3A46%3A00Z&sig=bUiI8xx3w1YWI1pBV%2FEm7%2BQasVB%2B5vGfCh1A3qalmUA%3D&ske=2024-04-14T03%3A44%3A13Z&skoid=09ba021e-c417-441c-b203-c81e5dcd7b7f&sks=b&skt=2024-04-07T03%3A44%3A13Z&sktid=33e01921-4d64-4f8c-a055-5bdaffd5e33d&skv=2020-10-02&sp=r&spr=https&sr=b&sv=2020-10-02"
+    image_url = "https://dalleproduse.blob.core.windows.net/private/images/49635ab5-6e1d-48fb-aad6-e4d3fb463dd2/generated_00.png?se=2024-04-09T16%3A50%3A24Z&sig=nZuhD%2BNPD9UhTbGFmEcea9UEj4G07HnxoFWQOQ6jk6Y%3D&ske=2024-04-15T00%3A17%3A51Z&skoid=09ba021e-c417-441c-b203-c81e5dcd7b7f&sks=b&skt=2024-04-08T00%3A17%3A51Z&sktid=33e01921-4d64-4f8c-a055-5bdaffd5e33d&skv=2020-10-02&sp=r&spr=https&sr=b&sv=2020-10-02"
 
     return image_url
 
