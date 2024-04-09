@@ -20,12 +20,15 @@ class ImageEngine:
             azure_endpoint=settings.azure_endpoint,
             api_key=self.api_key_token,
         )
-
-        result = client.images.generate(
-            model="Dalle3",
-            prompt=self.image_prompt,
-            n=1
-        )
+        try: 
+            result = client.images.generate(
+                model="Dalle3",
+                prompt=self.image_prompt,
+                n=1
+            )
+        except Exception as e:
+            print(f"Error: {e}")
+            return None
 
         image_url = json.loads(result.model_dump_json())['data'][0]['url']
         return image_url

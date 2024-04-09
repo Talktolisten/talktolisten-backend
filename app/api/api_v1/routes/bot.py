@@ -24,16 +24,26 @@ router = APIRouter(
     tags=['Bot']
 )
 
-@router.get("/{userID}", 
+@router.get("/created_bot", 
             summary="Get all bots created by user",
             description="Get all bots created by an user",
             response_model=List[bot.BotGet])
 def get_bots(
-    userID: str,
     db: Session = Depends(get_db), 
     current_user: str = Depends(get_current_user)
 ):
-    return db.query(models.Bot).filter(models.Bot.created_by == userID).all()
+    return db.query(models.Bot).filter(models.Bot.created_by == current_user).all()
+
+
+@router.get("/liked_bot", 
+            summary="Get all bots liked by user",
+            description="Get all bots liked by an user",
+            response_model=List[bot.BotGet])
+def get_liked_bots(
+    db: Session = Depends(get_db), 
+    current_user: str = Depends(get_current_user)
+):
+    return db.query(models.Bot).join(models.user_likes_bots).filter(models.user_likes_bots.c.user_id == current_user).all()
 
 
 @router.post("/", 
