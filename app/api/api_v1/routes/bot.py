@@ -179,15 +179,12 @@ def generate_avatar(
     image_prompt: bot.ImagePrompt,
     current_user: str = Depends(get_current_user)
 ):
-    # engine = ImageEngine(
-    #     image_prompt=image_prompt,
-    #     provider=configs.IMAGE_PROVIDER_1
-    # )
+    engine = ImageEngine(
+        image_prompt=image_prompt,
+        provider=configs.IMAGE_PROVIDER_1
+    )
 
-    # image_url = engine.get_image_response()
-
-    time.sleep(10)
-    image_url = "https://dalleproduse.blob.core.windows.net/private/images/49635ab5-6e1d-48fb-aad6-e4d3fb463dd2/generated_00.png?se=2024-04-09T16%3A50%3A24Z&sig=nZuhD%2BNPD9UhTbGFmEcea9UEj4G07HnxoFWQOQ6jk6Y%3D&ske=2024-04-15T00%3A17%3A51Z&skoid=09ba021e-c417-441c-b203-c81e5dcd7b7f&sks=b&skt=2024-04-08T00%3A17%3A51Z&sktid=33e01921-4d64-4f8c-a055-5bdaffd5e33d&skv=2020-10-02&sp=r&spr=https&sr=b&sv=2020-10-02"
+    image_url = engine.get_image_response()
 
     return image_url
 
@@ -244,6 +241,40 @@ def likes_bot(
         models.user_likes_bots.insert().values(
             user_id=current_user,
             bot_id=bot_id
+        )
+    )
+    db.commit()
+
+    return Response(status_code=status.HTTP_200_OK)
+
+
+@router.delete("/unlike/{bot_id}", 
+               summary="User unlikes a bot",
+               description="User unlikes a bot by bot id",
+               status_code=status.HTTP_200_OK)
+def unlike_bot(
+    bot_id: int,
+    db: Session = Depends(get_db), 
+    current_user: str = Depends(get_current_user)
+):
+    
+    bot_to_unlike = db.query(models.Bot).filter(models.Bot.bot_id == bot_id).first()
+    
+    if not bot_to_unlike:
+        raise HTTPException(status_code=404, detail="Bot not found")
+
+    existing_like = db.query(models.user_likes_bots).filter_by(
+        user_id=current_user,
+        bot_id=bot_id
+    ).first()
+
+    if not existing_like:
+        raise HTTPException(status_code=404, detail="Like not found")
+
+    db.execute(
+        models.user_likes_bots.delete().where(
+            models.user_likes_bots.c.user_id == current_user,
+            models.user_likes_bots.c.bot_id == bot_id
         )
     )
     db.commit()
