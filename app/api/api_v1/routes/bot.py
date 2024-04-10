@@ -161,7 +161,7 @@ def optimize_img_prompt(
     current_user: str = Depends(get_current_user)
 ):
     engine = UtilsEngine(
-        image_prompt=image_prompt,
+        image_prompt=image_prompt.image_prompt,
         util=UTILS[3]
     )
 
@@ -178,9 +178,9 @@ def optimize_img_prompt(
 def generate_avatar(
     image_prompt: bot.ImagePrompt,
     current_user: str = Depends(get_current_user)
-):
+):  
     engine = ImageEngine(
-        image_prompt=image_prompt,
+        image_prompt=image_prompt.image_prompt,
         provider=configs.IMAGE_PROVIDER_1
     )
 
