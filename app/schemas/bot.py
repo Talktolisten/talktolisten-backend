@@ -46,6 +46,9 @@ class BotUpdate(BaseModel):
     description: Optional[str]
     profile_picture: Optional[str]
     voice_id: Optional[int]
+    greeting: Optional[str]
+    privacy: Optional[str]
+    gender: Optional[str]
 
     class Config:
         from_attributes = True

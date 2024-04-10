@@ -31,8 +31,8 @@ router = APIRouter(
 def get_bots(
     db: Session = Depends(get_db), 
     current_user: str = Depends(get_current_user)
-):
-    return db.query(models.Bot).filter(models.Bot.created_by == current_user).all()
+):  
+    return db.query(models.Bot).filter(models.Bot.created_by == current_user).order_by(models.Bot.created_at.desc()).all()
 
 
 @router.get("/liked_bot", 
@@ -42,8 +42,8 @@ def get_bots(
 def get_liked_bots(
     db: Session = Depends(get_db), 
     current_user: str = Depends(get_current_user)
-):
-    return db.query(models.Bot).join(models.user_likes_bots).filter(models.user_likes_bots.c.user_id == current_user).all()
+):  
+    return db.query(models.Bot).join(models.user_likes_bots).filter(models.user_likes_bots.c.user_id == current_user).order_by(models.user_likes_bots.c.created_at.desc()).all()
 
 
 @router.post("/", 

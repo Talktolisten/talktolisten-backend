@@ -6,7 +6,8 @@ from .database import Base
 
 user_likes_bots = Table('user_likes_bots', Base.metadata,
     Column('user_id', String, ForeignKey('users.user_id'), primary_key=True),
-    Column('bot_id', Integer, ForeignKey('bots.bot_id'), primary_key=True)
+    Column('bot_id', Integer, ForeignKey('bots.bot_id'), primary_key=True),
+    Column('created_at', TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
 )
 
 class User(Base):
