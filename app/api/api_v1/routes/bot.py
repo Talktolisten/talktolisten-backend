@@ -27,11 +27,11 @@ router = APIRouter(
 @router.get("/{bot_id}", 
             summary="Get bots by id only for user",
             description="Get bots by id only for user (for editing a bot)",
-            response_model=List[bot.BotGet])
-def get_bots(
+            response_model=bot.BotGet)
+def get_bots_editting(
     bot_id: int,
     db: Session = Depends(get_db), 
-    current_user: str = Depends(get_current_user)
+    # current_user: str = Depends(get_current_user)
 ):  
     return db.query(models.Bot).filter(models.Bot.bot_id == bot_id).first()
 
