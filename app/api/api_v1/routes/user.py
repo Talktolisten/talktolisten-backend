@@ -1,6 +1,9 @@
 from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
 from sqlalchemy.orm import Session
 from typing import List, Optional
+from PIL import Image
+import io
+import os
 
 from sqlalchemy import func
 from app import models
@@ -8,6 +11,8 @@ from app.schemas import user, bot
 from app.database import get_db
 import app.utils as utils
 from app.auth import get_current_user
+from app.api.api_v1.engines.storage.azure import azure_storage
+from app.api.api_v1.dependency.utils import decode_base64
 
 router = APIRouter(
     prefix="/user",
@@ -85,12 +90,28 @@ def update_user(
     for var, value in user_update.dict().items():
         if var == "dob" and value is not None:
             setattr(db_user, var, utils.format_dob(value))
-        elif value is not None:
+        elif value is not None and var != "profile_picture":
             setattr(db_user, var, value) 
+
+    db.commit()
+
+    if user_update.profile_picture is not None:
+        image_path = f"app/api/api_v1/dependency/temp_img_{user_id}.webp"
+        image_url = user_update.profile_picture
+        image_data = decode_base64(image_url)
+        image = Image.open(io.BytesIO(image_data))
+        image.save(image_path, 'WEBP')
+
+        image_upload = f"{user_id}.webp"
+
+        azure_storage.upload_blob(image_path, "user-avatar", image_upload)
+
+        db_user.profile_picture = f"https://ttl.blob.core.windows.net/user-avatar/{image_upload}"
 
     db.commit()
     db.refresh(db_user)
     db_user.dob = utils.format_dob_str(db_user.dob)
+    os.remove(image_path)
     return db_user
 
 

@@ -11,9 +11,12 @@ class BotGet(BaseModel):
     profile_picture: Optional[str]
     category: Optional[str]
     voice_id: int
+    greeting: str
     num_chats: int
     likes: int
     created_by: str
+    privacy: str
+    gender: str
 
     class Config:
         from_attributes = True
