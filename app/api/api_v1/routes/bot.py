@@ -31,7 +31,7 @@ router = APIRouter(
 def get_bots_editting(
     bot_id: int,
     db: Session = Depends(get_db), 
-    # current_user: str = Depends(get_current_user)
+    current_user: str = Depends(get_current_user)
 ):  
     return db.query(models.Bot).filter(models.Bot.bot_id == bot_id).first()
 
