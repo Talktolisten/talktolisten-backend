@@ -24,7 +24,7 @@ router = APIRouter(
     tags=['Bot']
 )
 
-@router.get("/{bot_id}", 
+@router.get("/edit_bot/{bot_id}", 
             summary="Get bots by id only for user",
             description="Get bots by id only for user (for editing a bot)",
             response_model=bot.BotGet)
