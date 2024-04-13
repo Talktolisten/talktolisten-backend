@@ -25,8 +25,10 @@ class Settings(BaseSettings):
     # Azure credentials
     speech_key: str
     speech_region: str
-    azure_api_key: str
-    azure_endpoint: str
+    azure_text_api_key: str
+    azure_text_endpoint: str
+    azure_img_api_key: str
+    azure_img_endpoint: str
     azure_connection_string: str
 
     # Runpod credentials

@@ -30,8 +30,10 @@ jobs:
       ELEVENTLABS_API_KEY: ${{secrets.ELEVENTLABS_API_KEY}}
       TOGETHER_API_KEY: ${{secrets.TOGETHER_API_KEY}}
       GOOGLE_API_KEY: ${{secrets.GOOGLE_API_KEY}}
-      AZURE_API_KEY: ${{secrets.AZURE_API_KEY}}
-      AZURE_ENDPOINT: ${{secrets.AZURE_ENDPOINT}}
+      AZURE_TEXT_API_KEY: ${{secrets.AZURE_TEXT_API_KEY}}
+      AZURE_TEXT_ENDPOINT: ${{secrets.AZURE_TEXT_ENDPOINT}}
+      AZURE_IMG_API_KEY: ${{secrets.AZURE_IMG_API_KEY}}
+      AZURE_IMG_ENDPOINT: ${{secrets.AZURE_IMG_ENDPOINT}}
       AZURE_CONNECTION_STRING: ${{secrets.AZURE_CONNECTION_STRING}}
 
     runs-on: ubuntu-latest

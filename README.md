@@ -63,5 +63,5 @@ docker run --env-file .env -p 8000:8000 ttl-backend
 
 ## GitHub Action Runner starts on EC2
 ```bash
-./run.sh
+nohup ./run.sh &
 ```

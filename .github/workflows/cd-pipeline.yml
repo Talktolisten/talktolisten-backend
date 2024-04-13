@@ -54,8 +54,10 @@ jobs:
           echo "ELEVENTLABS_API_KEY=${{ secrets.ELEVENTLABS_API_KEY }}" >> .env
           echo "TOGETHER_API_KEY=${{ secrets.TOGETHER_API_KEY }}" >> .env
           echo "GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }}" >> .env
-          echo "AZURE_API_KEY=${{ secrets.AZURE_API_KEY }}" >> .env
-          echo "AZURE_ENDPOINT=${{ secrets.AZURE_ENDPOINT }}" >> .env
+          echo "AZURE_TEXT_API_KEY=${{ secrets.AZURE_TEXT_API_KEY }}" >> .env
+          echo "AZURE_TEXT_ENDPOINT=${{ secrets.AZURE_TEXT_ENDPOINT }}" >> .env
+          echo "AZURE_IMG_API_KEY=${{ secrets.AZURE_IMG_API_KEY }}" >> .env
+          echo "AZURE_IMG_ENDPOINT=${{ secrets.AZURE_IMG_ENDPOINT }}" >> .env
           echo "AZURE_CONNECTION_STRING=${{ secrets.AZURE_CONNECTION_STRING }}" >> .env
 
       - name: Run Docker Container

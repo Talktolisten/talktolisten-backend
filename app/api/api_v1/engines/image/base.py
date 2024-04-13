@@ -11,13 +11,13 @@ class ImageEngine:
         self.api_key_token = None
 
         if provider == configs.IMAGE_PROVIDER_1:
-            self.api_key_token = settings.azure_api_key
+            self.api_key_token = settings.azure_img_api_key
             self.responseEngine = self.AzureEngine()
 
     def AzureEngine(self):
         client = AzureOpenAI(
             api_version="2024-02-01",
-            azure_endpoint=settings.azure_endpoint,
+            azure_endpoint=settings.azure_img_endpoint,
             api_key=self.api_key_token,
         )
         try: 

@@ -237,6 +237,8 @@ def update_bot(
 
         image_upload = f"{id}.webp"
 
+        azure_storage.delete_blob("ttl-images", f'{id}.webp')
+
         azure_storage.upload_blob(image_path, "ttl-images", image_upload)
 
         db_bot.profile_picture = f"https://ttl.blob.core.windows.net/ttl-images/{image_upload}"

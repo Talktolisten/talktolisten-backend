@@ -1,4 +1,5 @@
 import openai
+from openai import AzureOpenAI
 import google.generativeai as genai
 from app.config import settings
 class TextEngine:
@@ -24,10 +25,12 @@ class TextEngine:
         if provider == "together":
             self.api_key_token = settings.together_api_key
             self.responseEngine = self.TogetherEngine()
-        
-        if provider == "google":
+        elif provider == "google":
             self.api_key_token = settings.google_api_key
             self.responseEngine = self.GoogleEngine()
+        elif provider == "azure":
+            self.api_key_token = settings.azure_text_api_key
+            self.responseEngine = self.AzureEngine()
 
     def GoogleEngine(self):
         genai.configure(api_key=self.api_key_token)
@@ -92,4 +95,36 @@ class TextEngine:
     
     def get_response(self):
         return self.responseEngine
+    
+    
+    def AzureEngine(self):
+        client = AzureOpenAI(
+            azure_endpoint = settings.azure_text_endpoint, 
+            api_key=self.api_key_token,  
+            api_version="2024-02-15-preview"
+            )
+        
+        messages=[
+            {
+            "role": "system",
+            "content": self.system_prompt,
+            },
+            {
+            "role": "user",
+            "content": self.prompt,
+            }
+        ],
+        
+        completion = client.chat.completions.create(
+            model="ttl-gpt",
+            messages = messages,
+            temperature=self.temperature,
+            max_tokens=self.max_tokens,
+            top_p=0.95,
+            frequency_penalty=0,
+            presence_penalty=0,
+            stop=None
+            )
+
+        return completion.choices[0].message.content
         
