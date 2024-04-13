@@ -110,10 +110,11 @@ def update_user(
 
         db_user.profile_picture = f"https://ttl.blob.core.windows.net/user-avatar/{image_upload}"
 
+        os.remove(image_path)
+        
     db.commit()
     db.refresh(db_user)
     db_user.dob = utils.format_dob_str(db_user.dob)
-    os.remove(image_path) if os.path.exists(image_path) else None
     return db_user
 
 
