@@ -104,6 +104,8 @@ def update_user(
 
         image_upload = f"{user_id}.webp"
 
+        azure_storage.delete_blob("user-avatar", image_upload)
+
         azure_storage.upload_blob(image_path, "user-avatar", image_upload)
 
         db_user.profile_picture = f"https://ttl.blob.core.windows.net/user-avatar/{image_upload}"

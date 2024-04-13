@@ -237,7 +237,7 @@ def update_bot(
 
         image_upload = f"{id}.webp"
 
-        azure_storage.delete_blob("ttl-images", f'{id}.webp')
+        azure_storage.delete_blob("ttl-images", image_upload)
 
         azure_storage.upload_blob(image_path, "ttl-images", image_upload)
 
