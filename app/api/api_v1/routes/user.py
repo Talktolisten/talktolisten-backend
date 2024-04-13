@@ -113,7 +113,7 @@ def update_user(
     db.commit()
     db.refresh(db_user)
     db_user.dob = utils.format_dob_str(db_user.dob)
-    os.remove(image_path)
+    os.remove(image_path) if os.path.exists(image_path) else None
     return db_user
 
 
