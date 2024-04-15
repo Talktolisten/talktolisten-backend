@@ -61,4 +61,4 @@ jobs:
           echo "AZURE_CONNECTION_STRING=${{ secrets.AZURE_CONNECTION_STRING }}" >> .env
 
       - name: Run Docker Container
-        run: sudo docker run -d --env-file .env -p 8000:8000 -v /home/ttl-admin/uplifted-name-397314-cce42675cc98.json:/app/service-account.json -e GOOGLE_APPLICATION_CREDENTIALS=/app/service-account.json SERVER=$SERVER --name ttl-backend ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:latest
+        run: sudo docker run -d --env-file .env -p 8000:8000 -v /home/ttl-admin/uplifted-name-397314-cce42675cc98.json:/app/service-account.json -e GOOGLE_APPLICATION_CREDENTIALS=/app/service-account.json -e SERVER=$SERVER --name ttl-backend ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:latest
