@@ -180,7 +180,7 @@ async def create_message(
 
     message_lists = make_message_lists(last_chats)
 
-    textEngine = TextEngine(message_lists, db_bot.bot_name, db_bot.description, configs.TEXT_PROVIDER_2)
+    textEngine = TextEngine(message_lists, db_bot.bot_name, db_bot.description)
     ml_response = textEngine.get_response()
     # job_id = get_ml_response(bot_description, new_message.message)
     # if job_id:
@@ -396,7 +396,7 @@ async def process_audio(
         message_lists = make_message_lists(last_chats)
         bot = db.query(models.Bot).filter(models.Bot.bot_id == bot_id).first()
         
-        textEngine = TextEngine(message_lists, bot.bot_name, bot.description, configs.TEXT_PROVIDER_2)
+        textEngine = TextEngine(message_lists, bot.bot_name, bot.description)
         ml_response = textEngine.get_response()
 
         new_message = models.Message(

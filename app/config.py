@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings
+import os
 
 class Settings(BaseSettings):
     database_hostname: str
@@ -41,7 +42,7 @@ class Settings(BaseSettings):
     # Text provider
     together_api_key: str
     google_api_key: str
-    
+
     class Config:
         env_file = ".env"
 
@@ -58,6 +59,7 @@ class Config:
     # Text provider
     TEXT_PROVIDER_1: str = "together"
     TEXT_PROVIDER_2: str = "google"
+    TEXT_PROVIDER_3: str = "azure"
 
     # Image provider
     IMAGE_PROVIDER_1: str = "azure"
@@ -65,4 +67,21 @@ class Config:
     IMAGE_PROVIDER_3: str = "google"
     IMAGE_PROVIDER_4: str = "deepai"
 
+    # Image modals
+    IMAGE_ENDPOINT_NAME_1 = "Dalle3"
+    IMAGE_ENDPOINT_NAME_2 = "Dalle3-2"
+
 configs = Config()
+
+
+class ServerConfig:
+    # Server config
+    server = os.getenv("SERVER")
+    if server == "1":
+        TEXT_PROVIDER = configs.TEXT_PROVIDER_2
+        IMAGE_ENDPOINT_NAME = configs.IMAGE_ENDPOINT_NAME_1
+    else:
+        TEXT_PROVIDER = configs.TEXT_PROVIDER_3
+        IMAGE_ENDPOINT_NAME = configs.IMAGE_ENDPOINT_NAME_2
+
+server_config = ServerConfig()

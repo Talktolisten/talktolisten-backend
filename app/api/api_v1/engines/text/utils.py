@@ -1,6 +1,6 @@
 import openai
 import google.generativeai as genai
-from app.config import settings
+from app.config import settings, server_config
 
 
 UTILS = [
@@ -15,14 +15,13 @@ class UtilsEngine():
                 character_name: str = None,
                 character_description: str = None,
                 image_prompt: str = None,
-                provider: str = "google",
                 temperature: float = 1,
                 max_tokens: int = 512,
                 util: str = None
                 ):
         self.temperature = temperature
         self.max_tokens = max_tokens
-        
+        provider = "google"
         if util == UTILS[0]:
             self.prompt = f"You are tasked with crafting a greeting AND a concise description for the specified character. The greeting should use a distinct speaking style reflective of their unique personality, while the short description should encapsulate the character's key traits in a few words, based on the provided description. Ensure the response is short, natural, and directly relevant to the character's name and definition. You must only response with the greeting and the short description. The response should be EXACTLY structured as follows:\nGreeting: [Your greeting here]\nShort Description: [Your description here]\n\nCharacter name: {character_name}\nCharacter Definition: {character_description}"
         elif util == UTILS[1]:

@@ -1,18 +1,17 @@
 import openai
 from openai import AzureOpenAI
 import google.generativeai as genai
-from app.config import settings
+from app.config import settings, server_config
 class TextEngine:
     def __init__(self, 
                 message_list: str, 
                 character_name: str,
                 character_description: str,
-                provider: str,
                 temperature: float = 1,
                 max_tokens: int = 128
                 ):
         self.api_key_token = ""
-
+        provider = server_config.TEXT_PROVIDER
         self.system_prompt = "Embody the specified character, complete with their background, core traits, relationships, and goals. Use a distinct speaking style reflective of their unique personality and environment. Responses should be very short and natural, as if you were having actual and realistic conversation. Avoid lengthy introductions or explanations. Remember, you are in an ongoing conversation, so your responses should be contextually aware and maintain the flow of the dialogue."
         message_list.reverse()
 
@@ -113,7 +112,7 @@ class TextEngine:
             "role": "user",
             "content": self.prompt,
             }
-        ],
+        ]
         
         completion = client.chat.completions.create(
             model="ttl-gpt",

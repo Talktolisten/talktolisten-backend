@@ -1,6 +1,6 @@
 from openai import AzureOpenAI
 import json
-from app.config import settings, configs
+from app.config import settings, configs, server_config
 
 class ImageEngine:
     def __init__(self, 
@@ -22,7 +22,7 @@ class ImageEngine:
         )
         try: 
             result = client.images.generate(
-                model="Dalle3",
+                model=server_config.IMAGE_ENDPOINT_NAME,
                 prompt=self.image_prompt,
                 n=1
             )
