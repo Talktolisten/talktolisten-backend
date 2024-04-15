@@ -1,8 +1,8 @@
-name: CD Pipeline
+name: CD Pipeline 2
 
 on:
   workflow_run:
-    workflows: ["Build and Deploy (Continuous Integration)"]
+    workflows: ["Build and Deploy (Continuous Integration) Server 2"]
     types:
       - completed
 
@@ -11,7 +11,7 @@ jobs:
     environment:
       name: main
 
-    runs-on: [self-hosted]
+    runs-on: [self-hosted, server-2]
 
     steps:
       - name: Login to Docker Hub
@@ -61,4 +61,4 @@ jobs:
           echo "AZURE_CONNECTION_STRING=${{ secrets.AZURE_CONNECTION_STRING }}" >> .env
 
       - name: Run Docker Container
-        run: sudo docker run -d --env-file .env -p 8000:8000 -v /home/ttl-admin/uplifted-name-397314-cce42675cc98.json:/app/service-account.json -e GOOGLE_APPLICATION_CREDENTIALS=/app/service-account.json -e SERVER=$SERVER --name ttl-backend ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:latest
+        run: sudo docker run -d --env-file .env -p 8000:8000 -v /home/ttl-admin/uplifted-name-397314-cce42675cc98.json:/app/service-account.json -e GOOGLE_APPLICATION_CREDENTIALS=/app/service-account.json -e SERVER=2 --name ttl-backend ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:latest

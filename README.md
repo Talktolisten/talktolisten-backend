@@ -65,9 +65,3 @@ docker run --env-file .env -p 8000:8000 ttl-backend
 ```bash
 nohup ./run.sh &
 ```
-
-## Configure Server
-```bash
-echo 'export SERVER=${server}' >> ~/.bashrc
-source ~/.bashrc
-```
