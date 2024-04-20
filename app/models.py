@@ -1,5 +1,5 @@
 from sqlalchemy.schema import Column
-from sqlalchemy import Integer, String, Boolean, ForeignKey, text, Table
+from sqlalchemy import Integer, String, Boolean, ForeignKey, text, Table, CheckConstraint
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.sqltypes import TIMESTAMP, Date
 from .database import Base
@@ -70,7 +70,9 @@ class Message(Base):
 
     message_id = Column(Integer, primary_key=True, nullable=False, unique=True, autoincrement=True)
     chat_id = Column(Integer, ForeignKey(
-        "chats.chat_id", ondelete="CASCADE"), nullable=False)
+        "chats.chat_id", ondelete="CASCADE"), nullable=True)
+    group_chat_id = Column(Integer, ForeignKey(
+        "group_chats.group_chat_id", ondelete="CASCADE"), nullable=True)
     message = Column(String, nullable=False)
     created_at = Column(TIMESTAMP(timezone=True),
                         nullable=False, server_default=text('now()'))
@@ -79,6 +81,10 @@ class Message(Base):
     created_by_bot =Column(Integer, ForeignKey(
         "bots.bot_id", ondelete="CASCADE"), nullable=True)    
     is_bot = Column(Boolean, nullable=False,server_default="false")
+
+    __table_args__ = (
+        CheckConstraint('(chat_id IS NOT NULL AND group_chat_id IS NULL) OR (chat_id IS NULL AND group_chat_id IS NOT NULL)', name='chat_id_xor_group_chat_id'),
+    )
     
 class Chat(Base):
     __tablename__ = "chats"
@@ -100,3 +106,22 @@ class Chat(Base):
     last_message = Column(Integer, ForeignKey("messages.message_id",ondelete="CASCADE"), nullable=True)
 
 
+class GroupChat(Base):
+    __tablename__ = "group_chats"
+    group_chat_id = Column(Integer, primary_key=True, nullable=False, unique=True, autoincrement=True)
+    group_chat_name = Column(String, nullable=True)
+    user_id = Column(String, ForeignKey(
+        "users.user_id", ondelete="CASCADE"), nullable=False)
+    group_chat_profile_picture = Column(String, nullable=True)
+    created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
+    last_message = Column(Integer, ForeignKey("messages.message_id", ondelete="CASCADE"), nullable=True)
+
+
+class GroupChatBots(Base):
+    __tablename__ = "group_chat_bots"
+    group_chat_id = Column(Integer, ForeignKey(
+        "group_chats.group_chat_id", ondelete="CASCADE"), primary_key=True)
+    bot_id = Column(Integer, ForeignKey(
+        "bots.bot_id", ondelete="CASCADE"), primary_key=True)
+    joined_at = Column(TIMESTAMP(timezone=True),
+                        nullable=False, server_default=text('now()'))
