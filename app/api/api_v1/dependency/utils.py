@@ -2,6 +2,9 @@ from app.config import settings
 from typing import List
 import requests
 from pydub import AudioSegment
+from PIL import Image, ImageDraw, ImageFilter, ImageOps
+import requests
+from io import BytesIO
 import os
 import wave
 import asyncio
@@ -21,30 +24,6 @@ def save_wav(input, output):
         audio = wav_file.read()
         with open(output, 'wb') as output_file:
             output_file.write(audio)
-
-def concatenate_wav_files(input_file_paths, chat_id):
-    if not input_file_paths:
-        print('no')
-    output_filename = f'app/api/api_v1/dependency/temp_audio/{chat_id}audio_to_translate.wav'
-    params = None
-
-    # Open the first input file and get its parameters
-    print('here')
-    with wave.open(input_file_paths[0], 'rb') as first_input_wav:
-        params = first_input_wav.getparams()
-
-    # Open the output file with the parameters of the first input file
-    with wave.open(output_filename, 'wb') as output_wav:
-        output_wav.setparams(params)
-        print(input_file_paths)
-        for input_filename in input_file_paths:
-            print(input_filename)
-            with wave.open(input_filename, 'rb') as input_wav:
-                # Check if the parameters of the current input file match the parameters of the first input file
-                assert input_wav.getparams() == params, "Input files have different parameters"
-                output_wav.writeframes(input_wav.readframes(input_wav.getnframes()))
-
-    return output_filename
 
 def azure_speech_to_text(audio_path):
     try:
@@ -128,3 +107,61 @@ def make_message_lists(message_list: List[Message]) -> list:
         else:
             messages.append("User: " + message.message)
     return messages
+
+
+def create_group_profile_picture(avatar_paths, output_size=(1024, 1024)):
+    
+    def mask_circle_transparent(im, blur_radius, offset=0):
+        offset = blur_radius * 2 + offset
+        mask = Image.new("L", im.size, 0)
+        draw = ImageDraw.Draw(mask)
+        draw.ellipse((offset, offset, im.size[0] - offset, im.size[1] - offset), fill=255)
+        mask = mask.filter(ImageFilter.GaussianBlur(blur_radius))
+
+        result = ImageOps.fit(im, mask.size, centering=(0.5, 0.5))
+        result.putalpha(mask)
+        return result
+    
+    images = []
+
+    for url in avatar_paths:
+        response = requests.get(url)
+        if response.status_code == 200:
+            image = Image.open(BytesIO(response.content))
+            image = image.resize((output_size[0] // 2, output_size[1] // 2), Image.Resampling.LANCZOS)
+            image = mask_circle_transparent(image, 0)
+            images.append(image)
+    base_image = Image.new('RGBA', output_size, (255, 255, 255, 0))
+
+
+    if len(images) == 2:
+        new_width = output_size[0] // 2
+        new_height = new_width 
+        images = [im.resize((new_width, new_height), Image.Resampling.LANCZOS) for im in images]
+        images = [mask_circle_transparent(im, 0) for im in images]
+        base_image.paste(images[0], (0, (output_size[1] - new_height) // 2), images[0])
+        base_image.paste(images[1], (new_width, (output_size[1] - new_height) // 2), images[1])
+
+    elif len(images) == 3:
+        new_width = output_size[0] // 2
+        new_height = new_width  
+        resized_images = [im.resize((new_width, new_height), Image.Resampling.LANCZOS) for im in images[:2]]
+        resized_images = [mask_circle_transparent(im, 0) for im in resized_images]
+        third_img = images[2].resize((new_width, new_height), Image.Resampling.LANCZOS)
+        third_img = mask_circle_transparent(third_img, 0)
+
+        base_image.paste(resized_images[0], (0, 0), resized_images[0])
+        base_image.paste(resized_images[1], (new_width, 0), resized_images[1])
+        base_image.paste(third_img, ((output_size[0] - new_width) // 2, new_height), third_img)
+
+    elif len(images) == 4:
+        new_width = output_size[0] // 2
+        new_height = new_width
+        resized_images = [im.resize((new_width, new_height), Image.Resampling.LANCZOS) for im in images]
+        resized_images = [mask_circle_transparent(im, 0) for im in resized_images]
+        base_image.paste(resized_images[0], (0, 0), resized_images[0])
+        base_image.paste(resized_images[1], (new_width, 0), resized_images[1])
+        base_image.paste(resized_images[2], (0, new_height), resized_images[2])
+        base_image.paste(resized_images[3], (new_width, new_height), resized_images[3])
+
+    return base_image
