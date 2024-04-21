@@ -132,7 +132,8 @@ def create_chat(
 ):  
     new_group_chat = models.GroupChat(
         user_id=current_user,
-        group_chat_name=chat_data.group_chat_name
+        group_chat_name=chat_data.group_chat_name,
+        privacy=chat_data.privacy
     )
     db.add(new_group_chat)
     db.commit()

@@ -4,7 +4,7 @@ from typing import List, Optional
 
 from sqlalchemy import func
 from app import models
-from app.schemas import explore
+from app.schemas import explore, groupchat
 from app.database import get_db
 from app.auth import get_current_user
 
@@ -27,6 +27,21 @@ def get_bots(
 ):  
     bots = db.query(models.Bot).offset(skip).limit(limit).all()
     return bots
+
+
+@router.get("/groupchat", 
+            summary="Get all groupchat bots",
+            description="Get all groupchat bots in the database",
+            response_model=List[groupchat.GroupChatGet])
+def get_groupchats(
+    limit: int = 20, 
+    skip: int = 0,
+    # current_user: dict= Depends(get_current_user),
+    db: Session = Depends(get_db), 
+):  
+    db_groupchats = db.query(models.GroupChat).filter(models.GroupChat.privacy == 'private').order_by(func.random()).offset(skip).limit(limit).all()
+    return db_groupchats
+
 
 @router.get("/search", 
             summary="Search bots by name",
