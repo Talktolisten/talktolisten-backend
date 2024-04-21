@@ -436,7 +436,7 @@ async def process_audio(
             voice_service = VoiceEngine(text_response, voice.voice_endpoint)
             output_audio = voice_service.get_audio_response_eleventlabs()
 
-        return output_audio
+        return {'audio': output_audio, 'message': text_response, 'bot_id': random_bot.bot_id}
 
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
