@@ -1,12 +1,13 @@
 from app.config import settings
 import requests
 import os
-import base64
+from app.api.api_v1.engines.storage.azure import azure_storage
 
 class VoiceEngine():
-    def __init__(self, text: str, voice_endpoint: str):
+    def __init__(self, text: str, voice_endpoint: str, message_id: int):
         self.text = text
         self.voice_endpoint = voice_endpoint
+        self.message_id = message_id
 
     def get_audio_response_eleventlabs(self, stability = 0.7, similarity_boost = 0.5, style = 0.2, use_speaker_boost = True):
         voice_id = self.voice_endpoint.split("/")[-1]
@@ -15,12 +16,6 @@ class VoiceEngine():
         payload = {
             "model_id": "eleven_turbo_v2",
             "text": self.text,
-            "voice_settings": {
-                "similarity_boost": similarity_boost,
-                "stability": stability,
-                "use_speaker_boost": True,
-                "style": style
-            }
         }
 
         headers = {
@@ -31,17 +26,15 @@ class VoiceEngine():
         try:
             response = requests.request("POST", url, json=payload, headers=headers)
 
-            audio_file_path = 'app/api/api_v1/dependency/temp_audio/output_audio.mp3'
+            audio_file_path = f'app/api/api_v1/dependency/temp_audio/{self.message_id}output_audio.mp3'
 
-            with open(audio_file_path, 'wb') as audio_file:
-                audio_file.write(response.content)
-            
-            with open(audio_file_path, 'rb') as audio_file:
-                audio = audio_file.read()  
+            with open(audio_file_path, 'wb') as f:
+                f.write(response.content)
 
-            audio_base64 = base64.b64encode(audio).decode('utf-8')
+            azure_storage.upload_blob(audio_file_path, 'audio-messages', f'{self.message_id}.mp3')
 
             os.remove(audio_file_path)
-            return audio_base64
+
+            return f"https://ttl.blob.core.windows.net/audio-messages/{self.message_id}.mp3"
         except Exception as e:
             return e

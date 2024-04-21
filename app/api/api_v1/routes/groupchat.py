@@ -433,7 +433,7 @@ async def process_audio(
         )
 
         if voice.voice_provider == configs.VOICE_PROVIDER_1:
-            voice_service = VoiceEngine(text_response, voice.voice_endpoint)
+            voice_service = VoiceEngine(text_response, voice.voice_endpoint, new_bot_message.message_id)
             output_audio = voice_service.get_audio_response_eleventlabs()
 
         return {'audio': output_audio, 'message': text_response, 'bot_id': random_bot.bot_id}

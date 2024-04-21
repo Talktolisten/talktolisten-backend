@@ -413,7 +413,7 @@ async def process_audio(
         db.commit()
         
         if voice.voice_provider == configs.VOICE_PROVIDER_1:
-            voice_service = VoiceEngine(ml_response, voice.voice_endpoint)
+            voice_service = VoiceEngine(ml_response, voice.voice_endpoint, new_message.message_id)
             output_audio = voice_service.get_audio_response_eleventlabs()
 
         return output_audio
