@@ -16,8 +16,8 @@ class MessageGet(BaseModel):
     message_id: int
     chat_id: Optional[int]
     group_chat_id: Optional[int]
-    user_id: str
-    bot_id: int
+    user_id: Optional[str]
+    bot_id: Optional[int]
     message: str
     created_by_user: Optional[str]
     created_by_bot: Optional[int]

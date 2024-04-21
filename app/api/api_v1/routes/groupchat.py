@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 import os
 import random
-from sqlalchemy import func
+from sqlalchemy import func, select
 from app import models
 from app.config import configs
 from app.schemas import chat, bot, message, groupchat
@@ -184,11 +184,38 @@ def create_chat(
 def get_messages(
     group_chat_id,
     skip: int = 0,
+    limit: int = 100,
     db: Session = Depends(get_db),
     current_user: str = Depends(get_current_user),
 ):
-    messages = db.query(models.Message).filter(models.Message.group_chat_id == group_chat_id).offset(skip).all()
-    return messages
+    messages = (
+        db.query(models.Message)
+        .join(models.User, models.Message.created_by_user == models.User.user_id, isouter=True)
+        .join(models.Bot, models.Message.created_by_bot == models.Bot.bot_id, isouter=True)
+        .filter(models.Message.group_chat_id == group_chat_id)
+        .order_by(models.Message.created_at.desc())
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
+
+    result = [
+        message.MessageGet(
+            message_id=msg.message_id,
+            chat_id=None,
+            group_chat_id=msg.group_chat_id,
+            user_id=msg.created_by_user,
+            bot_id=msg.created_by_bot,
+            message=msg.message,
+            created_by_user=msg.created_by_user,
+            created_by_bot=msg.created_by_bot,
+            is_bot=msg.is_bot,
+            created_at=msg.created_at
+        )
+        for msg in messages
+    ]
+    
+    return result
 
 
 @router.post("/{group_chat_id}/message",
