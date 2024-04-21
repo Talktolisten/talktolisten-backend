@@ -81,6 +81,7 @@ def get_chats(
             group_chat_name=chat.group_chat_name,
             group_bots=chat_bots[chat.group_chat_id],
             group_chat_profile_picture=chat.group_chat_profile_picture,
+            privacy=chat.privacy,
             last_message_content=latest_message_content,
             last_message_time=latest_message_time
         )
@@ -115,6 +116,7 @@ def get_chat_by_id(
         group_chat_name=chat.group_chat_name,
         group_bots=chat_bots,
         group_chat_profile_picture=chat.group_chat_profile_picture,
+        privacy=chat.privacy
     )
     return response
 
@@ -171,6 +173,7 @@ def create_chat(
         group_chat_name=new_group_chat.group_chat_name,
         group_bots=all_bots,
         group_chat_profile_picture=new_group_chat.group_chat_profile_picture,
+        privacy=new_group_chat.privacy,
         last_message_content=new_bot_message.message,
         last_message_time=new_bot_message.created_at
     )
@@ -340,6 +343,7 @@ def update_chat(
         group_chat_name=db_group_chat.group_chat_name,
         group_bots=chat_bots,
         group_chat_profile_picture=db_group_chat.group_chat_profile_picture,
+        privacy=db_group_chat.privacy
     )
     return response
 

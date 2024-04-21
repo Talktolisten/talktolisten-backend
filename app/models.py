@@ -113,6 +113,7 @@ class GroupChat(Base):
     user_id = Column(String, ForeignKey(
         "users.user_id", ondelete="CASCADE"), nullable=False)
     group_chat_profile_picture = Column(String, nullable=True)
+    privacy = Column(String, nullable=False, server_default='public')
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
     last_message = Column(Integer, ForeignKey("messages.message_id", ondelete="CASCADE"), nullable=True)
 
