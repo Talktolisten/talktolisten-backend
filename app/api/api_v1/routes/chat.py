@@ -206,6 +206,7 @@ async def create_message(
     return message.MessageGet(
         message_id=bot_response.message_id,
         chat_id=bot_response.chat_id,
+        group_chat_id=None,
         user_id=db_chat.user_id,
         bot_id=bot_id,
         message=bot_response.message,
@@ -252,6 +253,7 @@ def get_messages(
         message.MessageGet(
             message_id=msg.message_id,
             chat_id=msg.chat_id,
+            group_chat_id=None,
             message=msg.message,
             created_at=msg.created_at,
             created_by_user=msg.created_by_user,
@@ -322,6 +324,7 @@ def get_older_messages(
         message.MessageGet(
             message_id=msg.message_id,
             chat_id=msg.chat_id,
+            group_chat_id=None,
             message=msg.message,
             created_at=msg.created_at,
             created_by_user=msg.created_by_user,
