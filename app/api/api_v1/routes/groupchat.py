@@ -89,6 +89,36 @@ def get_chats(
     return results
 
 
+@router.get("/get_chat_by_id/{group_chat_id}",
+            summary="Get a GroupChat",
+            description="Get a GroupChat by group_chat_id",
+            response_model=groupchat.GroupChatGet)
+def get_chat_by_id(
+    group_chat_id,
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user),
+):
+    chat = db.query(models.GroupChat).filter(models.GroupChat.group_chat_id == group_chat_id).first()
+    if not chat:
+        raise HTTPException(status_code=404, detail="GroupChat not found")
+
+    chat_bots = [
+        BotGet.model_validate(bot)
+        for bot in db.query(models.Bot)
+            .join(models.GroupChatBots, models.Bot.bot_id == models.GroupChatBots.bot_id)
+            .filter(models.GroupChatBots.group_chat_id == group_chat_id)
+            .all()
+    ]
+
+    response = groupchat.GroupChatGet(
+        group_chat_id=chat.group_chat_id,
+        group_chat_name=chat.group_chat_name,
+        group_bots=chat_bots,
+        group_chat_profile_picture=chat.group_chat_profile_picture,
+    )
+    return response
+
+
 @router.post("/create",
                 summary="Create a GroupChat",
                 description="Create a GroupChat",
