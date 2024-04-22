@@ -59,6 +59,9 @@ class Voice(Base):
     voice_description = Column(String, nullable=False)
     voice_endpoint = Column(String, nullable=False)
     voice_provider = Column(String, nullable=False)
+    gender = Column(String, nullable=True)
+    language = Column(String, nullable=True, server_default='en-US')
+    style = Column(String, nullable=True, server_default='neutral')
     created_at = Column(TIMESTAMP(timezone=True),
                         nullable=False, server_default=text('now()'))
     created_by = Column(String, ForeignKey(

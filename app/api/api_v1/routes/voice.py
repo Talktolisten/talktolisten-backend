@@ -18,8 +18,8 @@ router = APIRouter(
             description="Get all voices",
             response_model=List[voice.VoiceGet])
 def get_voice(
-    limit: int = 25, 
     skip: int = 0, 
+    limit: Optional[int] = None, 
     search: Optional[str] = None, 
     db: Session = Depends(get_db),
     current_user: str = Depends(get_current_user)
