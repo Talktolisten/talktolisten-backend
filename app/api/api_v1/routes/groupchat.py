@@ -162,10 +162,10 @@ def create_chat(
     db.commit()
 
     new_profile_picture = create_group_profile_picture([bot.profile_picture for bot in db.query(models.Bot).join(models.GroupChatBots).filter(models.GroupChatBots.group_chat_id == new_group_chat.group_chat_id).limit(4).all()])
-    new_profile_picture.save(f"app/api/api_v1/dependency/temp_image/group_chat_{new_group_chat.group_chat_id}.png")
-    azure_storage.upload_blob(f"app/api/api_v1/dependency/temp_image/group_chat_{new_group_chat.group_chat_id}.png", "group-chat-images", f"{new_group_chat.group_chat_id}.png")
-    os.remove(f"app/api/api_v1/dependency/temp_image/group_chat_{new_group_chat.group_chat_id}.png")
-    new_group_chat.group_chat_profile_picture = f"https://ttl.blob.core.windows.net/group-chat-images/{new_group_chat.group_chat_id}.png"
+    new_profile_picture.save(f"app/api/api_v1/dependency/temp_image/group_chat_{new_group_chat.group_chat_id}.webp")
+    azure_storage.upload_blob(f"app/api/api_v1/dependency/temp_image/group_chat_{new_group_chat.group_chat_id}.webp", "group-chat-images", f"{new_group_chat.group_chat_id}.webp")
+    os.remove(f"app/api/api_v1/dependency/temp_image/group_chat_{new_group_chat.group_chat_id}.webp")
+    new_group_chat.group_chat_profile_picture = f"https://ttl.blob.core.windows.net/group-chat-images/{new_group_chat.group_chat_id}.webp"
     db.commit()
     db.refresh(new_group_chat)
 
@@ -437,9 +437,8 @@ async def process_audio(
             .first()
         )
 
-        if voice.voice_provider == configs.VOICE_PROVIDER_1:
-            voice_service = VoiceEngine(text_response, voice.voice_endpoint, new_bot_message.message_id)
-            output_audio = voice_service.get_audio_response_eleventlabs()
+        voice_service = VoiceEngine(text_response, voice, new_bot_message.message_id)
+        output_audio = voice_service.get_audio_response()
 
         return {'audio': output_audio, 'message': text_response, 'bot_id': random_bot.bot_id}
 
