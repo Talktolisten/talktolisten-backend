@@ -5,6 +5,7 @@ from typing import List, Optional
 from sqlalchemy import func
 from app import models
 from app.schemas import explore, groupchat
+from app.schemas.bot import BotGet
 from app.database import get_db
 from app.auth import get_current_user
 
@@ -36,11 +37,30 @@ def get_bots(
 def get_groupchats(
     limit: int = 20, 
     skip: int = 0,
-    current_user: dict= Depends(get_current_user),
     db: Session = Depends(get_db), 
+    current_user: dict= Depends(get_current_user),
 ):  
     db_groupchats = db.query(models.GroupChat).filter(models.GroupChat.privacy == 'public').order_by(func.random()).offset(skip).limit(limit).all()
-    return db_groupchats
+    response = []
+    for chat in db_groupchats:
+        chat_bots = [
+            BotGet.model_validate(bot)
+            for bot in db.query(models.Bot)
+                .join(models.GroupChatBots, models.Bot.bot_id == models.GroupChatBots.bot_id)
+                .filter(models.GroupChatBots.group_chat_id == chat.group_chat_id)
+                .all()
+        ]
+
+        chat_response = groupchat.GroupChatGet(
+            group_chat_id=chat.group_chat_id,
+            group_chat_name=chat.group_chat_name,
+            group_bots=chat_bots,
+            group_chat_profile_picture=chat.group_chat_profile_picture,
+            privacy=chat.privacy
+        )
+        response.append(chat_response)
+
+    return response
 
 
 @router.get("/search", 
