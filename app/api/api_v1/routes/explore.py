@@ -36,10 +36,10 @@ def get_bots(
 def get_groupchats(
     limit: int = 20, 
     skip: int = 0,
-    # current_user: dict= Depends(get_current_user),
+    current_user: dict= Depends(get_current_user),
     db: Session = Depends(get_db), 
 ):  
-    db_groupchats = db.query(models.GroupChat).filter(models.GroupChat.privacy == 'private').order_by(func.random()).offset(skip).limit(limit).all()
+    db_groupchats = db.query(models.GroupChat).filter(models.GroupChat.privacy == 'public').order_by(func.random()).offset(skip).limit(limit).all()
     return db_groupchats
 
 
