@@ -71,6 +71,9 @@ class Config:
     IMAGE_ENDPOINT_NAME_1 = "Dalle3"
     IMAGE_ENDPOINT_NAME_2 = "Dalle3-2"
 
+    # Prompt Optimization for third party LLM
+    PROMPT_OPTIMIZATION = "Provide a response that is easy to understand and communicate effectively with the user. Use clear, direct language and aim for a Flesch reading score of 80 or higher. Avoid complex terminology, technical jargon, and excessive adverbs or buzzwords. Only use relevant domain-specific jargon when necessary to provide a complete explanation"
+
 configs = Config()
 
 
