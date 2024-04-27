@@ -8,7 +8,7 @@ from app.config import settings, server_config
 
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+app = FastAPI(title="Talk To Listen", version="1.0.0", description="Talk To Listen API Reference. Only for showcase purpose.", redoc_url="/redoc")
 
 origins = ["*"]
 
@@ -21,7 +21,7 @@ app.add_middleware(
 )
 
 @app.get("/")
-def root():
+def talk_to_listen():
     return {"message": f"Talk To Listen BackEnd. Server: {server_config.server}"}
 
 app.include_router(api_router, prefix=settings.API_VERSION)
