@@ -2,7 +2,7 @@ name: CD Pipeline 2
 
 on:
   workflow_run:
-    workflows: ["Build and Deploy (Continuous Integration)"]
+    workflows: ["Build and Deploy (Continuous Integration)", "CD Pipeline 1"]
     types:
       - completed
 
@@ -21,13 +21,13 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
       - name: Pull Docker image
-        run: sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:latest
+        run: docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:latest
 
       - name: Delete Old docker container
-        run: sudo docker rm -f ttl-backend || true
+        run: docker rm -f ttl-backend || true
 
       - name: Remove dangling Docker images
-        run: sudo docker image prune -f
+        run: docker image prune -f
 
       - name: Create .env file
         run: |
@@ -62,4 +62,4 @@ jobs:
           echo "AZURE_DB_ENDPOINT=${{ secrets.AZURE_DB_ENDPOINT }}" >> .env
 
       - name: Run Docker Container
-        run: sudo docker run -d --env-file .env -p 8000:8000 -v /home/ttl-admin/uplifted-name-397314-cce42675cc98.json:/app/service-account.json -e GOOGLE_APPLICATION_CREDENTIALS=/app/service-account.json -e SERVER=2 --name ttl-backend ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:latest
+        run: docker run -d --env-file .env -p 8000:8000 -v /home/ttl-admin/uplifted-name-397314-cce42675cc98.json:/app/service-account.json -e GOOGLE_APPLICATION_CREDENTIALS=/app/service-account.json -e SERVER=2 --name ttl-backend ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:latest
