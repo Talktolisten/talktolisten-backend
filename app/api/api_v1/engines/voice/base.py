@@ -46,7 +46,7 @@ class VoiceEngine():
 
             os.remove(audio_file_path)
 
-            return f"https://ttl.blob.core.windows.net/audio-messages/{self.message_id}.mp3"
+            return f"{settings.azure_db_endpoint}/audio-messages/{self.message_id}.mp3"
         except Exception as e:
             return e
         
@@ -90,7 +90,7 @@ class VoiceEngine():
 
             os.remove(audio_file_path)
 
-            return f"https://ttl.blob.core.windows.net/audio-messages/{self.message_id}.mp3"
+            return f"{settings.azure_db_endpoint}/audio-messages/{self.message_id}.mp3"
         
         elif result.reason == speechsdk.ResultReason.Canceled:
             cancellation_details = result.cancellation_details

@@ -8,7 +8,7 @@ from app.config import settings, server_config
 
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="Talk To Listen", version="1.0.0", description="Talk To Listen API Reference. Only for showcase purpose.", redoc_url="/redoc")
+app = FastAPI(title="Talk To Listen", version="1.0.0", description="Talk To Listen API Documentation. Only for showcase purpose.", redoc_url="/redoc")
 
 origins = ["*"]
 

@@ -11,7 +11,7 @@ from app import models
 from app.schemas import bot
 from app.database import get_db
 from app.auth import get_current_user
-from app.config import configs
+from app.config import configs, settings
 from app.api.api_v1.dependency.utils import decode_base64
 from app.api.api_v1.engines.storage.azure import azure_storage
 from app.api.api_v1.engines.text.utils import UTILS, UtilsEngine
@@ -91,7 +91,7 @@ def create_bot(
 
     azure_storage.upload_blob(image_path, "ttl-images", image_upload)
 
-    db_bot.profile_picture = f"https://ttl.blob.core.windows.net/ttl-images/{image_upload}"
+    db_bot.profile_picture = f"{settings.azure_db_endpoint}/ttl-images/{image_upload}"
     db.commit()
     db.refresh(db_bot)
 
@@ -241,7 +241,7 @@ def update_bot(
 
         azure_storage.upload_blob(image_path, "ttl-images", image_upload)
 
-        db_bot.profile_picture = f"https://ttl.blob.core.windows.net/ttl-images/{image_upload}"
+        db_bot.profile_picture = f"{settings.azure_db_endpoint}/ttl-images/{image_upload}"
 
         os.remove(image_path)
 

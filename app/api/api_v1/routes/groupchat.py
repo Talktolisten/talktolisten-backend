@@ -5,7 +5,7 @@ import os
 import random
 from sqlalchemy import func, select
 from app import models
-from app.config import configs
+from app.config import configs, settings
 from app.schemas import chat, bot, message, groupchat
 from app.schemas.bot import BotGet
 from app.api.api_v1.engines.storage.azure import azure_storage
@@ -165,7 +165,7 @@ def create_chat(
     new_profile_picture.save(f"app/api/api_v1/dependency/temp_image/group_chat_{new_group_chat.group_chat_id}.webp")
     azure_storage.upload_blob(f"app/api/api_v1/dependency/temp_image/group_chat_{new_group_chat.group_chat_id}.webp", "group-chat-images", f"{new_group_chat.group_chat_id}.webp")
     os.remove(f"app/api/api_v1/dependency/temp_image/group_chat_{new_group_chat.group_chat_id}.webp")
-    new_group_chat.group_chat_profile_picture = f"https://ttl.blob.core.windows.net/group-chat-images/{new_group_chat.group_chat_id}.webp"
+    new_group_chat.group_chat_profile_picture = f"{settings.azure_db_endpoint}/group-chat-images/{new_group_chat.group_chat_id}.webp"
     db.commit()
     db.refresh(new_group_chat)
 

@@ -10,6 +10,7 @@ from app import models
 from app.schemas import user, bot
 from app.database import get_db
 import app.utils as utils
+from app.config import settings
 from app.auth import get_current_user
 from app.api.api_v1.engines.storage.azure import azure_storage
 from app.api.api_v1.dependency.utils import decode_base64
@@ -108,7 +109,7 @@ def update_user(
 
         azure_storage.upload_blob(image_path, "user-avatar", image_upload)
 
-        db_user.profile_picture = f"https://ttl.blob.core.windows.net/user-avatar/{image_upload}"
+        db_user.profile_picture = f"{settings.azure_db_endpoint}/user-avatar/{image_upload}"
 
         os.remove(image_path)
         

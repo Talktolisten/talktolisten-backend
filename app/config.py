@@ -31,6 +31,7 @@ class Settings(BaseSettings):
     azure_img_api_key: str
     azure_img_endpoint: str
     azure_connection_string: str
+    azure_db_endpoint: str
 
     # Runpod credentials
     runpod_endpoint: str

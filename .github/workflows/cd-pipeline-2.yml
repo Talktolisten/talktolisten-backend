@@ -59,6 +59,7 @@ jobs:
           echo "AZURE_IMG_API_KEY=${{ secrets.AZURE_IMG_API_KEY }}" >> .env
           echo "AZURE_IMG_ENDPOINT=${{ secrets.AZURE_IMG_ENDPOINT }}" >> .env
           echo "AZURE_CONNECTION_STRING=${{ secrets.AZURE_CONNECTION_STRING }}" >> .env
+          echo "AZURE_DB_ENDPOINT=${{ secrets.AZURE_DB_ENDPOINT }}" >> .env
 
       - name: Run Docker Container
         run: sudo docker run -d --env-file .env -p 8000:8000 -v /home/ttl-admin/uplifted-name-397314-cce42675cc98.json:/app/service-account.json -e GOOGLE_APPLICATION_CREDENTIALS=/app/service-account.json -e SERVER=2 --name ttl-backend ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:latest

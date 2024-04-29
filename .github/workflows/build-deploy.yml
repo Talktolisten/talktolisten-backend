@@ -35,6 +35,7 @@ jobs:
       AZURE_IMG_API_KEY: ${{secrets.AZURE_IMG_API_KEY}}
       AZURE_IMG_ENDPOINT: ${{secrets.AZURE_IMG_ENDPOINT}}
       AZURE_CONNECTION_STRING: ${{secrets.AZURE_CONNECTION_STRING}}
+      AZURE_DB_ENDPOINT: ${{secrets.AZURE_DB_ENDPOINT}}
 
     runs-on: ubuntu-latest
     steps:
