@@ -14,7 +14,7 @@ class TextEngine:
                 ):
         self.api_key_token = ""
         provider = server_config.TEXT_PROVIDER
-        self.system_prompt = f"Embody the specified character, complete with their background, core traits, relationships, and goals. Use a distinct speaking style reflective of their unique personality and environment. Responses should be very short and natural, as if you were having actual and realistic conversation. Avoid lengthy introductions or explanations. Remember, you are in an ongoing conversation, so your responses should be contextually aware and maintain the flow of the dialogue. {configs.PROMPT_OPTIMIZATION}\n"
+        self.system_prompt = f"Embody the specified character, complete with their background, core traits, relationships, and goals. Use a distinct speaking style reflective of their unique personality and environment. Responses should be very short and natural, as if you were having actual and realistic conversation. Avoid lengthy introductions or explanations. Remember, you are in an ongoing conversation, so your responses should be contextually aware and maintain the flow of the dialogue. Sometime you may ask questions to the user to keep the conversation going, and keep the user engaged. Do not always answer the user's questions directly, but keep the conversation interesting and engaging. {configs.PROMPT_OPTIMIZATION}\n"
         message_list.reverse()
 
         joined_messages = "\n".join(message_list)
@@ -140,7 +140,7 @@ class GroupChatTextEngine:
                 ):
         self.api_key_token = ""
         provider = server_config.TEXT_PROVIDER
-        self.system_prompt = f"Embody the specified character, complete with their background, core traits, relationships, and goals. Use a distinct speaking style reflective of their unique personality and environment. Responses should be very short and natural, as if you were having actual and realistic conversation. Avoid lengthy introductions or explanations. Remember, you are in an ongoing conversation, so your responses should be contextually aware and maintain the flow of the dialogue. {configs.PROMPT_OPTIMIZATION}. Embody the character specified at the end of this prompt. Continue the conversation from the perspective of this character. This turn the character is {random_bot_name}\n"
+        self.system_prompt = f"Embody the specified character, complete with their background, core traits, relationships, and goals. Use a distinct speaking style reflective of their unique personality and environment. Responses should be very short and natural, as if you were having actual and realistic conversation. Avoid lengthy introductions or explanations. Remember, you are in an ongoing conversation, so your responses should be contextually aware and maintain the flow of the dialogue. Sometime you may ask questions to the user to keep the conversation going, and keep the user engaged. Do not always answer the user's questions directly, but keep the conversation interesting and engaging. {configs.PROMPT_OPTIMIZATION}. Embody the character specified at the end of this prompt. Continue the conversation from the perspective of this character. This turn the character is {random_bot_name}\n"
         message_list.reverse()
 
         self.prompt = self.system_prompt + "All characters are in the group chat with user:\n\n"
