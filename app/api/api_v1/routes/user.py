@@ -4,6 +4,7 @@ from typing import List, Optional
 from PIL import Image
 import io
 import os
+import uuid
 
 from sqlalchemy import func
 from app import models
@@ -160,3 +161,42 @@ def get_created_bots(
 ):  
     bots = db.query(models.Bot).filter(models.Bot.created_by == user_id).all()
     return bots
+
+
+@router.post("/feedback_report",
+            summary="Send feedback or report",
+            description="Send feedback or report to the developers",
+            status_code=status.HTTP_201_CREATED)
+def send_fr(
+    FeedbackReportObj: user.FeedbackReport,
+    db: Session = Depends(get_db), 
+    user_id: Optional[str] = Depends(get_current_user)
+):  
+    img_list = []
+    if FeedbackReportObj.pictures is not None:
+        for i in range(len(FeedbackReportObj.pictures)):
+            temporary_id = uuid.uuid4()
+            image_path = f"app/api/api_v1/dependency/temp_img_rf_{temporary_id}.webp"
+            image_url = FeedbackReportObj.pictures[i]
+            image_data = decode_base64(image_url)
+            image = Image.open(io.BytesIO(image_data))
+            image.save(image_path, 'WEBP')
+
+            image_upload = f"{temporary_id}.webp"
+
+            azure_storage.upload_blob(image_path, "feedback-report", image_upload)
+            img_list.append(f"{settings.azure_db_endpoint}/feedback-report/{image_upload}")
+            os.remove(image_path)
+    
+    if FeedbackReportObj.feedback is not None:
+        utils.send_email("Feedback", FeedbackReportObj.feedback, img_list)
+    else:
+        utils.send_email("Report", FeedbackReportObj.report, img_list)
+
+    db_fr = models.FeedbackReport(feedback = FeedbackReportObj.feedback, report = FeedbackReportObj.report, user_id = user_id, pictures = img_list)
+
+    db.add(db_fr)
+    db.commit()
+    db.refresh(db_fr)
+
+    return Response(status_code=status.HTTP_201_CREATED)

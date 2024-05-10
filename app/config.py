@@ -10,6 +10,9 @@ class Settings(BaseSettings):
     
     API_VERSION: str = "/api/v1"
 
+    developer_email: str
+    sendgrid_api_key: str
+
     #Firebase credentials
     fb_type: str
     fb_project_id: str

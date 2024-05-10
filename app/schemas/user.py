@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 
 from pydantic.types import conint
 
@@ -44,6 +44,14 @@ class UserUpdate(BaseModel):
     profile_picture: Optional[str] = None
     status: Optional[str] = None
     theme: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+class FeedbackReport(BaseModel):
+    feedback: Optional[str]
+    report: Optional[str]
+    pictures: Optional[List[str]]
 
     class Config:
         from_attributes = True

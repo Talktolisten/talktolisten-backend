@@ -12,6 +12,8 @@ jobs:
       DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
       DATABASE_NAME: ${{secrets.DATABASE_NAME}}
       DATABASE_USERNAME: ${{secrets.DATABASE_USERNAME}}
+      DEVELOPER_EMAIL: ${{secrets.DEVELOPER_EMAIL}}
+      SENDGRID_API_KEY: ${{secrets.SENDGRID_API_KEY}}
       FB_TYPE: ${{secrets.FB_TYPE}}
       FB_PROJECT_ID: ${{secrets.FB_PROJECT_ID}}
       FB_PRIVATE_KEY_ID: ${{secrets.FB_PRIVATE_KEY_ID}}
