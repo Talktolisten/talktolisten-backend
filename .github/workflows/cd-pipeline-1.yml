@@ -36,7 +36,7 @@ jobs:
           echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> .env
           echo "DATABASE_NAME=${{ secrets.DATABASE_NAME }}" >> .env
           echo "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}" >> .env
-          echo "DEVELOPER_EMAIL=${{ secrets.DEVELOPER_EMAIL }}"
+          echo "DEVELOPER_EMAIL=${{ secrets.DEVELOPER_EMAIL }}" >> .env
           echo "SENDGRID_API_KEY=${{ secrets.SENDGRID_API_KEY }}" >> .env
           echo "FB_TYPE=${{ secrets.FB_TYPE }}" >> .env
           echo "FB_PROJECT_ID=${{ secrets.FB_PROJECT_ID }}" >> .env
