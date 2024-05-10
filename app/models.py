@@ -129,3 +129,14 @@ class GroupChatBots(Base):
         "bots.bot_id", ondelete="CASCADE"), primary_key=True)
     joined_at = Column(TIMESTAMP(timezone=True),
                         nullable=False, server_default=text('now()'))
+    
+
+class FeedbackReport(Base):
+    __tablename__ = "feedback_report"
+    fr_id = Column(Integer, primary_key=True, nullable=False, unique=True, autoincrement=True)
+    user_id = Column(String, ForeignKey(
+        "users.user_id", ondelete="CASCADE"), nullable=False)
+    feedback = Column(String, nullable=True)
+    report = Column(String, nullable=True)
+    picture = Column(String, nullable=True)
+    created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
