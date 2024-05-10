@@ -1,5 +1,6 @@
 from sqlalchemy.schema import Column
 from sqlalchemy import Integer, String, Boolean, ForeignKey, text, Table, CheckConstraint
+from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.sqltypes import TIMESTAMP, Date
 from .database import Base
@@ -138,5 +139,5 @@ class FeedbackReport(Base):
         "users.user_id", ondelete="CASCADE"), nullable=False)
     feedback = Column(String, nullable=True)
     report = Column(String, nullable=True)
-    picture = Column(String, nullable=True)
+    pictures = Column(ARRAY(String), nullable=True)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
