@@ -5,6 +5,7 @@ from . import models
 from .database import engine
 from app.api.api_v1.api import api_router
 from app.config import settings, server_config
+from app.middleware import BlockIPMiddleware
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -16,9 +17,11 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PATCH", "DELETE"],
+    allow_headers=["Authorization"],
 )
+
+app.add_middleware(BlockIPMiddleware)
 
 @app.get("/")
 def talk_to_listen():
