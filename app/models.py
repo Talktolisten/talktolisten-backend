@@ -141,3 +141,9 @@ class FeedbackReport(Base):
     report = Column(String, nullable=True)
     pictures = Column(ARRAY(String), nullable=True)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
+
+
+class BlockIP(Base):
+    __tablename__ = "block_ips"
+    ip = Column(String, primary_key=True, nullable=False, unique=True)
+    created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
