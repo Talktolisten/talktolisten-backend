@@ -22,7 +22,7 @@ class BlockIPMiddleware(BaseHTTPMiddleware):
         db = next(get_db())
         try:
             blocked_ip = db.query(BlockIP).filter(BlockIP.ip == client_ip).first()
-            if blocked_ip or request.url.path not in allowed_paths or not request.url.path.startswith(settings.API_VERSION):
+            if blocked_ip or not (request.url.path in allowed_paths or request.url.path.startswith(settings.API_VERSION)):
                 return JSONResponse(status_code=status.HTTP_403_FORBIDDEN, content={"message": "Access denied"})
         finally:
             db.close()
