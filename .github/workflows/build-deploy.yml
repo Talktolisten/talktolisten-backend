@@ -3,79 +3,79 @@ name: Build and Deploy (Continuous Integration)
 on: [push, pull_request]
 
 jobs:
-  build:
-    environment:
-      name: main
-    env:
-      DATABASE_HOSTNAME: ${{secrets.DATABASE_HOSTNAME}}
-      DATABASE_PORT: ${{secrets.DATABASE_PORT}}
-      DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
-      DATABASE_NAME: ${{secrets.DATABASE_NAME}}
-      DATABASE_USERNAME: ${{secrets.DATABASE_USERNAME}}
-      DEVELOPER_EMAIL: ${{secrets.DEVELOPER_EMAIL}}
-      SENDGRID_API_KEY: ${{secrets.SENDGRID_API_KEY}}
-      FB_TYPE: ${{secrets.FB_TYPE}}
-      FB_PROJECT_ID: ${{secrets.FB_PROJECT_ID}}
-      FB_PRIVATE_KEY_ID: ${{secrets.FB_PRIVATE_KEY_ID}}
-      FB_PRIVATE_KEY: ${{secrets.FB_PRIVATE_KEY}}
-      FB_CLIENT_EMAIL: ${{secrets.FB_CLIENT_EMAIL}}
-      FB_CLIENT_ID: ${{secrets.FB_CLIENT_ID}}
-      FB_AUTH_URI: ${{secrets.FB_AUTH_URI}}
-      FB_TOKEN_URI: ${{secrets.FB_TOKEN_URI}}
-      FB_AUTH_PROVIDER_X509_CERT_URL: ${{secrets.FB_AUTH_PROVIDER_X509_CERT_URL}}
-      FB_CLIENT_X509_CERT_URL: ${{secrets.FB_CLIENT_X509_CERT_URL}}
-      FB_UNIVERSE_DOMAIN: ${{secrets.FB_UNIVERSE_DOMAIN}}
-      SPEECH_KEY: ${{secrets.SPEECH_KEY}}
-      SPEECH_REGION: ${{secrets.SPEECH_REGION}}
-      RUNPOD_ENDPOINT: ${{secrets.RUNPOD_ENDPOINT}}
-      RUNPOD_API_KEY: ${{secrets.RUNPOD_API_KEY}}
-      ELEVENTLABS_API_KEY: ${{secrets.ELEVENTLABS_API_KEY}}
-      TOGETHER_API_KEY: ${{secrets.TOGETHER_API_KEY}}
-      GOOGLE_API_KEY: ${{secrets.GOOGLE_API_KEY}}
-      AZURE_TEXT_API_KEY: ${{secrets.AZURE_TEXT_API_KEY}}
-      AZURE_TEXT_ENDPOINT: ${{secrets.AZURE_TEXT_ENDPOINT}}
-      AZURE_IMG_API_KEY: ${{secrets.AZURE_IMG_API_KEY}}
-      AZURE_IMG_ENDPOINT: ${{secrets.AZURE_IMG_ENDPOINT}}
-      AZURE_CONNECTION_STRING: ${{secrets.AZURE_CONNECTION_STRING}}
-      AZURE_DB_ENDPOINT: ${{secrets.AZURE_DB_ENDPOINT}}
+    build:
+        environment:
+            name: main
+        env:
+            DATABASE_HOSTNAME: ${{secrets.DATABASE_HOSTNAME}}
+            DATABASE_PORT: ${{secrets.DATABASE_PORT}}
+            DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
+            DATABASE_NAME: ${{secrets.DATABASE_NAME}}
+            DATABASE_USERNAME: ${{secrets.DATABASE_USERNAME}}
+            DEVELOPER_EMAIL: ${{secrets.DEVELOPER_EMAIL}}
+            SENDGRID_API_KEY: ${{secrets.SENDGRID_API_KEY}}
+            FB_TYPE: ${{secrets.FB_TYPE}}
+            FB_PROJECT_ID: ${{secrets.FB_PROJECT_ID}}
+            FB_PRIVATE_KEY_ID: ${{secrets.FB_PRIVATE_KEY_ID}}
+            FB_PRIVATE_KEY: ${{secrets.FB_PRIVATE_KEY}}
+            FB_CLIENT_EMAIL: ${{secrets.FB_CLIENT_EMAIL}}
+            FB_CLIENT_ID: ${{secrets.FB_CLIENT_ID}}
+            FB_AUTH_URI: ${{secrets.FB_AUTH_URI}}
+            FB_TOKEN_URI: ${{secrets.FB_TOKEN_URI}}
+            FB_AUTH_PROVIDER_X509_CERT_URL: ${{secrets.FB_AUTH_PROVIDER_X509_CERT_URL}}
+            FB_CLIENT_X509_CERT_URL: ${{secrets.FB_CLIENT_X509_CERT_URL}}
+            FB_UNIVERSE_DOMAIN: ${{secrets.FB_UNIVERSE_DOMAIN}}
+            SPEECH_KEY: ${{secrets.SPEECH_KEY}}
+            SPEECH_REGION: ${{secrets.SPEECH_REGION}}
+            RUNPOD_ENDPOINT: ${{secrets.RUNPOD_ENDPOINT}}
+            RUNPOD_API_KEY: ${{secrets.RUNPOD_API_KEY}}
+            ELEVENTLABS_API_KEY: ${{secrets.ELEVENTLABS_API_KEY}}
+            TOGETHER_API_KEY: ${{secrets.TOGETHER_API_KEY}}
+            GOOGLE_API_KEY: ${{secrets.GOOGLE_API_KEY}}
+            AZURE_TEXT_API_KEY: ${{secrets.AZURE_TEXT_API_KEY}}
+            AZURE_TEXT_ENDPOINT: ${{secrets.AZURE_TEXT_ENDPOINT}}
+            AZURE_IMG_API_KEY: ${{secrets.AZURE_IMG_API_KEY}}
+            AZURE_IMG_ENDPOINT: ${{secrets.AZURE_IMG_ENDPOINT}}
+            AZURE_CONNECTION_STRING: ${{secrets.AZURE_CONNECTION_STRING}}
+            AZURE_DB_ENDPOINT: ${{secrets.AZURE_DB_ENDPOINT}}
 
-    runs-on: ubuntu-latest
-    steps:
-      - name: pulling git repo
-        uses: actions/checkout@v4
-      - name: Install python version 3.9
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.9"
-      - name: update pip
-        run: python -m pip install --upgrade pip
-      - name: install all dependencies
-        run: pip install -r requirements.txt
-      # - name: test with pytest
-      #   run: |
-      #     pip install pytest
-      #     pytest
+        runs-on: ubuntu-latest
+        steps:
+            - name: pulling git repo
+              uses: actions/checkout@v4
+            - name: Install python version 3.9
+              uses: actions/setup-python@v5
+              with:
+                  python-version: "3.9"
+            - name: update pip
+              run: python -m pip install --upgrade pip
+            - name: install all dependencies
+              run: pip install -r requirements.txt
+            # - name: test with pytest
+            #   run: |
+            #     pip install pytest
+            #     pytest
 
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+            - name: Login to Docker Hub
+              uses: docker/login-action@v3
+              with:
+                  username: ${{ secrets.DOCKER_HUB_USERNAME }}
+                  password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v1
+            - name: Set up Docker Buildx
+              id: buildx
+              uses: docker/setup-buildx-action@v3
 
-      - name: Build and push
-        id: docker_build
-        uses: docker/build-push-action@v2
-        with:
-          context: ./
-          file: ./Dockerfile
-          builder: ${{ steps.buildx.outputs.name }}
-          push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:latest
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
-      - name: Image digest
-        run: echo ${{ steps.docker_build.outputs.digest }}
+            - name: Build and push
+              id: docker_build
+              uses: docker/build-push-action@v6
+              with:
+                  context: ./
+                  file: ./Dockerfile
+                  builder: ${{ steps.buildx.outputs.name }}
+                  push: true
+                  tags: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:latest
+                  cache-from: type=local,src=/tmp/.buildx-cache
+                  cache-to: type=local,dest=/tmp/.buildx-cache
+            - name: Image digest
+              run: echo ${{ steps.docker_build.outputs.digest }}
