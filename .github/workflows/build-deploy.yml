@@ -38,6 +38,7 @@ jobs:
       AZURE_IMG_ENDPOINT: ${{secrets.AZURE_IMG_ENDPOINT}}
       AZURE_CONNECTION_STRING: ${{secrets.AZURE_CONNECTION_STRING}}
       AZURE_DB_ENDPOINT: ${{secrets.AZURE_DB_ENDPOINT}}
+      ADMIN_ID: ${{secrets.ADMIN_ID}}
 
     runs-on: ubuntu-latest
     timeout-minutes: 15
