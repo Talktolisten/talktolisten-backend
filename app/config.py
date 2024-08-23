@@ -13,6 +13,8 @@ class Settings(BaseSettings):
     developer_email: str
     sendgrid_api_key: str
 
+    admin_id: str
+
     #Firebase credentials
     fb_type: str
     fb_project_id: str
