@@ -2,7 +2,7 @@ name: CD Pipeline 2
 
 on:
   workflow_run:
-    workflows: ["CD Pipeline 1"]
+    workflows: ["CD Pipeline 2"]
     types:
       - completed
 
