@@ -62,7 +62,7 @@ class TextEngine:
             }
         ]
 
-        model = genai.GenerativeModel(model_name="gemini-pro",
+        model = genai.GenerativeModel(model_name="gemini-2.5-flash-lite",
                                     generation_config=generation_config,
                                     safety_settings=safety_settings)
 
@@ -201,7 +201,7 @@ class GroupChatTextEngine:
             }
         ]
 
-        model = genai.GenerativeModel(model_name="gemini-pro",
+        model = genai.GenerativeModel(model_name="gemini-2.5-flash-lite",
                                     generation_config=generation_config,
                                     safety_settings=safety_settings)
 
