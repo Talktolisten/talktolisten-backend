@@ -4,7 +4,7 @@ from app.models import User, Bot, Voice, Message, Chat
 
 db = next(get_db())
 
-# before run the test: export PYTHONPATH=$PWD 
+# before run the test: export PYTHONPATH=$PWD
 
 user1 = User(
     user_id="user1123123",

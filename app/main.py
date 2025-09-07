@@ -9,7 +9,12 @@ from app.middleware import BlockIPMiddleware
 
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="Talk To Listen", version="1.0.0", description="Talk To Listen API Documentation. Only for showcase purpose.", redoc_url="/redoc")
+app = FastAPI(
+    title="Talk To Listen",
+    version="1.0.0",
+    description="Talk To Listen API Documentation. Only for showcase purpose.",
+    redoc_url="/redoc",
+)
 
 origins = ["*"]
 
@@ -23,8 +28,10 @@ app.add_middleware(
 
 app.add_middleware(BlockIPMiddleware)
 
+
 @app.get("/")
 def talk_to_listen():
     return {"message": f"Talk To Listen BackEnd. Server: {server_config.server}"}
+
 
 app.include_router(api_router, prefix=settings.API_VERSION)

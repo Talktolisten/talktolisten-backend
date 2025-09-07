@@ -1,13 +1,14 @@
 from pydantic_settings import BaseSettings
 import os
 
+
 class Settings(BaseSettings):
     database_hostname: str
     database_port: str
     database_password: str
     database_name: str
     database_username: str
-    
+
     API_VERSION: str = "/api/v1"
 
     developer_email: str
@@ -15,7 +16,7 @@ class Settings(BaseSettings):
 
     admin_id: str
 
-    #Firebase credentials
+    # Firebase credentials
     fb_type: str
     fb_project_id: str
     fb_private_key_id: str
@@ -27,7 +28,7 @@ class Settings(BaseSettings):
     fb_auth_provider_x509_cert_url: str
     fb_client_x509_cert_url: str
     fb_universe_domain: str
-    
+
     # Azure credentials
     speech_key: str
     speech_region: str
@@ -55,6 +56,7 @@ class Settings(BaseSettings):
 
 settings = Settings()
 
+
 class Config:
     # Voice provider
     VOICE_PROVIDER_1: str = "eleventlabs"
@@ -80,6 +82,7 @@ class Config:
     # Prompt Optimization for third party LLM
     PROMPT_OPTIMIZATION = "Provide a response that is easy to understand and communicate effectively with the user. Use clear, direct language and aim for a Flesch reading score of 80 or higher. Avoid complex terminology, technical jargon, and excessive adverbs or buzzwords. Only use relevant domain-specific jargon when necessary to provide a complete explanation"
 
+
 configs = Config()
 
 
@@ -92,5 +95,6 @@ class ServerConfig:
     else:
         TEXT_PROVIDER = configs.TEXT_PROVIDER_3
         IMAGE_ENDPOINT_NAME = configs.IMAGE_ENDPOINT_NAME_2
+
 
 server_config = ServerConfig()

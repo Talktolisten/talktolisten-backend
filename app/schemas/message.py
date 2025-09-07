@@ -12,6 +12,7 @@ class MessageCreate(BaseModel):
     class Config:
         from_attributes = True
 
+
 class MessageGet(BaseModel):
     message_id: int
     chat_id: Optional[int]

@@ -3,6 +3,7 @@ from typing import Optional
 
 from pydantic.types import conint
 
+
 class BotGet(BaseModel):
     bot_id: int
     bot_name: str
@@ -21,6 +22,7 @@ class BotGet(BaseModel):
     class Config:
         from_attributes = True
 
+
 class BotCreate(BaseModel):
     bot_name: str
     short_description: Optional[str]
@@ -36,12 +38,14 @@ class BotCreate(BaseModel):
     class Config:
         from_attributes = True
 
+
 class BotGenerate(BaseModel):
     bot_name: str
     description: str
 
     class Config:
         from_attributes = True
+
 
 class BotUpdate(BaseModel):
     bot_name: Optional[str]
@@ -55,6 +59,7 @@ class BotUpdate(BaseModel):
 
     class Config:
         from_attributes = True
+
 
 class ImagePrompt(BaseModel):
     image_prompt: str

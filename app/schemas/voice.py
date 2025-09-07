@@ -16,6 +16,7 @@ class VoiceGet(BaseModel):
     class Config:
         from_attributes = True
 
+
 class VoiceCreate(BaseModel):
     voice_name: str
     voice_description: str
@@ -26,6 +27,7 @@ class VoiceCreate(BaseModel):
 
     class Config:
         from_atributes = True
+
 
 class VoiceUpdate(BaseModel):
     voice_name: Optional[str]

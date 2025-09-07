@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
 
+
 class ChatGet(BaseModel):
     chat_id: int
     user_id: str

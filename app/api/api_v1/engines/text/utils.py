@@ -7,18 +7,20 @@ UTILS = [
     "greetings and short description",
     "optimize description",
     "generate image prompt",
-    "optimize image prompt"
+    "optimize image prompt",
 ]
 
-class UtilsEngine():
-    def __init__(self, 
-                character_name: str = None,
-                character_description: str = None,
-                image_prompt: str = None,
-                temperature: float = 1,
-                max_tokens: int = 512,
-                util: str = None
-                ):
+
+class UtilsEngine:
+    def __init__(
+        self,
+        character_name: str = None,
+        character_description: str = None,
+        image_prompt: str = None,
+        temperature: float = 1,
+        max_tokens: int = 512,
+        util: str = None,
+    ):
         self.temperature = temperature
         self.max_tokens = max_tokens
         provider = "google"
@@ -35,7 +37,6 @@ class UtilsEngine():
             self.api_key_token = settings.google_api_key
             self.responseEngine = self.GoogleEngine()
 
-
     def GoogleEngine(self):
         genai.configure(api_key=self.api_key_token)
 
@@ -47,34 +48,30 @@ class UtilsEngine():
         }
 
         safety_settings = [
-            {
-                "category": "HARM_CATEGORY_HARASSMENT",
-                "threshold": "BLOCK_ONLY_HIGH"
-            },
-            {
-                "category": "HARM_CATEGORY_HATE_SPEECH",
-                "threshold": "BLOCK_ONLY_HIGH"
-            },
+            {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_ONLY_HIGH"},
+            {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_ONLY_HIGH"},
             {
                 "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-                "threshold": "BLOCK_ONLY_HIGH"
+                "threshold": "BLOCK_ONLY_HIGH",
             },
             {
                 "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-                "threshold": "BLOCK_ONLY_HIGH"
-            }
+                "threshold": "BLOCK_ONLY_HIGH",
+            },
         ]
 
-        model = genai.GenerativeModel(model_name="gemini-pro",
-                                    generation_config=generation_config,
-                                    safety_settings=safety_settings)
+        model = genai.GenerativeModel(
+            model_name="gemini-pro",
+            generation_config=generation_config,
+            safety_settings=safety_settings,
+        )
 
         responses = model.generate_content(self.prompt)
         return responses.text
-    
+
     def get_response(self):
         return self.responseEngine
-    
+
     def process_response_util_0(self, response):
         print(response)
         greeting = response.split("\n")[0].replace("Greeting: ", "")

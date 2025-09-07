@@ -20,6 +20,7 @@ def db() -> Generator:
 def current_user() -> str:
     return "test_user_id"
 
+
 @pytest.fixture(scope="module")
 def client(current_user: str) -> Generator:
     app.dependency_overrides[get_current_user] = lambda: current_user

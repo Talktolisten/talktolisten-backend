@@ -6,6 +6,7 @@ from app.tests.utils.user import create_random_user
 from app.tests.utils.bot import create_random_bot
 from app.tests.utils.voice import create_random_voice
 
+
 def test_create_chat(client: TestClient, db: Session) -> None:
     user = create_random_user(db)
     bot = create_random_bot(db, user.user_id)

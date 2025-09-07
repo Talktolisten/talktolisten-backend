@@ -8,21 +8,21 @@ from app.schemas import voice
 from app.database import get_db
 from app.auth import get_current_user
 
-router = APIRouter(
-    prefix="/voice",
-    tags=['Voice']
-)
+router = APIRouter(prefix="/voice", tags=["Voice"])
 
-@router.get("/", 
-            summary="Get all voices",
-            description="Get all voices",
-            response_model=List[voice.VoiceGet])
+
+@router.get(
+    "/",
+    summary="Get all voices",
+    description="Get all voices",
+    response_model=List[voice.VoiceGet],
+)
 def get_voice(
-    skip: int = 0, 
-    limit: Optional[int] = None, 
-    search: Optional[str] = None, 
+    skip: int = 0,
+    limit: Optional[int] = None,
+    search: Optional[str] = None,
     db: Session = Depends(get_db),
-    current_user: str = Depends(get_current_user)
+    current_user: str = Depends(get_current_user),
 ):
     query = db.query(models.Voice)
 
@@ -33,54 +33,66 @@ def get_voice(
     return voice
 
 
-@router.get("/{id}", 
-            summary="Get voice by id",
-            description="Get voice by id",
-            response_model=voice.VoiceGet)
+@router.get(
+    "/{id}",
+    summary="Get voice by id",
+    description="Get voice by id",
+    response_model=voice.VoiceGet,
+)
 def get_voice_by_id(
     id: int,
-    db: Session = Depends(get_db), 
-    current_user: str = Depends(get_current_user)
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user),
 ):
     voice = db.query(models.Voice).filter(models.Voice.voice_id == id).first()
 
     if not voice:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Voice not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Voice not found"
+        )
 
     return voice
 
 
-@router.get("/user/{id}", 
-            summary="Get voice by user id",
-            description="Get voice that the user created by user id",
-            response_model=List[voice.VoiceGet])
+@router.get(
+    "/user/{id}",
+    summary="Get voice by user id",
+    description="Get voice that the user created by user id",
+    response_model=List[voice.VoiceGet],
+)
 def get_voice_by_user_id(
     id: str,
-    db: Session = Depends(get_db), 
-    current_user: str = Depends(get_current_user)
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user),
 ):
     voice = db.query(models.Voice).filter(models.Voice.created_by == id).all()
 
     if not voice:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Voice not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Voice not found"
+        )
 
     return voice
 
 
-@router.patch("/{id}", 
-            summary="Update voice information by id",
-            description="Update voice information by id",
-            response_model=voice.VoiceGet)
+@router.patch(
+    "/{id}",
+    summary="Update voice information by id",
+    description="Update voice information by id",
+    response_model=voice.VoiceGet,
+)
 def update_voice(
     id: int,
     voice_update: voice.VoiceUpdate,
-    db: Session = Depends(get_db), 
-    current_user: str = Depends(get_current_user)
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user),
 ):
     db_voice = db.query(models.Voice).filter(models.Voice.voice_id == id).first()
 
     if not db_voice:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Voice not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Voice not found"
+        )
 
     for var, value in voice_update.dict().items():
         if value is not None:
@@ -91,15 +103,17 @@ def update_voice(
     return db_voice
 
 
-@router.post("/", 
-            summary="Create / Clone new voice",
-            description="Clone new voice using EleventLabs",
-            response_model=voice.VoiceGet,
-            status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/",
+    summary="Create / Clone new voice",
+    description="Clone new voice using EleventLabs",
+    response_model=voice.VoiceGet,
+    status_code=status.HTTP_201_CREATED,
+)
 def clone_voice(
     voice: voice.VoiceCreate,
-    db: Session = Depends(get_db), 
-    current_user: str = Depends(get_current_user)
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user),
 ):
     voice = models.Voice(**voice.dict())
     voice.voice_endpoint = "voice_endpoint"
@@ -111,19 +125,23 @@ def clone_voice(
     return voice
 
 
-@router.delete("/{id}", 
-            summary="Delete voice by id",
-            description="Delete voice by id",
-            status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/{id}",
+    summary="Delete voice by id",
+    description="Delete voice by id",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
 def delete_voice(
     id: int,
-    db: Session = Depends(get_db), 
-    current_user: str = Depends(get_current_user)
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user),
 ):
     voice = db.query(models.Voice).filter(models.Voice.voice_id == id).first()
 
     if not voice:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Voice not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Voice not found"
+        )
 
     db.delete(voice)
     db.commit()

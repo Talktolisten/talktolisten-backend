@@ -3,6 +3,7 @@ from typing import Optional
 from datetime import datetime
 from .bot import BotGet
 
+
 class GroupChatGet(BaseModel):
     group_chat_id: int
     group_chat_name: Optional[str] = None
@@ -15,6 +16,7 @@ class GroupChatGet(BaseModel):
     class Config:
         from_attributes = True
 
+
 class GroupChatCreate(BaseModel):
     group_chat_name: str
     group_bots: Optional[list[int]] = None
@@ -22,6 +24,7 @@ class GroupChatCreate(BaseModel):
 
     class Config:
         from_attributes = True
+
 
 class GroupChatUpdate(BaseModel):
     group_chat_name: Optional[str]

@@ -99,7 +99,8 @@ def test_update_user(client: TestClient, db: Session) -> None:
         "dob": "12 / 12 / 1999",
     }
     response = client.patch(
-        f"{settings.API_VERSION}/user/{data['user_id']}", json=user_update)
+        f"{settings.API_VERSION}/user/{data['user_id']}", json=user_update
+    )
     assert response.status_code == 200
     data = response.json()
     assert data["username"] == user_update["username"]

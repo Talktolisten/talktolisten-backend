@@ -17,6 +17,7 @@ class UserCreate(BaseModel):
     class Config:
         from_attributes = True
 
+
 class UserGet(BaseModel):
     user_id: str
     username: str
@@ -33,6 +34,7 @@ class UserGet(BaseModel):
     class Config:
         from_attributes = True
 
+
 class UserUpdate(BaseModel):
     username: Optional[str] = None
     gmail: Optional[str] = None
@@ -47,6 +49,7 @@ class UserUpdate(BaseModel):
 
     class Config:
         from_attributes = True
+
 
 class FeedbackReport(BaseModel):
     feedback: Optional[str]

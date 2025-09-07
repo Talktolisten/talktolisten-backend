@@ -15,10 +15,12 @@ def create_random_voice(db: Session, owner_id: Optional[str] = None) -> Voice:
     voice_name = random_lower_string()
     voice_description = random_lower_string()
     created_by = owner_id
-    voice_in = VoiceCreate(voice_name=voice_name,
-                        voice_description=voice_description,
-                        created_by=created_by)
-    
+    voice_in = VoiceCreate(
+        voice_name=voice_name,
+        voice_description=voice_description,
+        created_by=created_by,
+    )
+
     voice = Voice(**voice_in.dict())
     voice.voice_endpoint = "voice_endpoint"
     voice.voice_provider = "eleventlabs"
